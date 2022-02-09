@@ -15,3 +15,5 @@ basejava.iml
 
 # исключаю  startjava
 /startjava
+
+/log
