@@ -1,0 +1,17 @@
+#комментарий к файлу .gitignore
+
+#все файлы в каталоге out
+/out
+
+#все файлы в каталоге Trash
+/Trash
+
+#все class-файлы...
+*.class
+
+# добавил Intellij IDEA
+basejava.iml
+/.idea
+
+# исключаю  startjava
+/startjava
