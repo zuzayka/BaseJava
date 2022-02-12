@@ -14,7 +14,6 @@ public class ArrayStorage {
         for (int i = 0; i < 10000; i++) {
             if (storage[i] == null) {
                 storage[i] = r;
-                System.out.println(storage[i].uuid);
                 break;
             }
         }
