@@ -6,7 +6,7 @@ import java.util.Arrays;
 public class ArrayStorage {
     private int size = 0;
 
-    Resume[] storage = new Resume[3];
+    Resume[] storage = new Resume[10000];
 
     int getSize() {
         return size;
