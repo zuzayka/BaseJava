@@ -22,10 +22,26 @@ public class ArrayStorage {
     }
 
     public void update(Resume r) {
-
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(r.getUuid())) {
+                storage[i] = r;
+                return;
+            }
+        }
+        System.out.println("Error in update(Resume r) method: Resume with uuid = " + r.getUuid() + " not in the Resumes");
     }
 
     public void save(Resume r) {
+        if (size == 9999) {
+            System.out.println("Error in save(Resume r) method: Resumes is full");
+            return;
+        }
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(r.getUuid())) {
+                System.out.println("Error in save(Resume r) method: Resume with uuid = " + r.getUuid() + " exist in the Resumes");
+                return;
+            }
+        }
         storage[size] = r;
         size++;
     }
@@ -36,6 +52,7 @@ public class ArrayStorage {
                 return storage[i];
             }
         }
+        System.out.println("Error in get(String uuid) method: Resume with uuid = " + uuid + " not in the Resumes");
         return null;
     }
 
@@ -49,9 +66,10 @@ public class ArrayStorage {
                 System.arraycopy(storage, i + 1, storage, i, size - i - 1);
                 storage[size - 1] = null;
                 size--;
-                break;
+                return;
             }
         }
+        System.out.println("Error in delete(String uuid) method: Resume with uuid = " + uuid + " not in the Resumes");
     }
 
     /**
