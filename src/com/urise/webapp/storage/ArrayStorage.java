@@ -28,17 +28,17 @@ public class ArrayStorage {
                 return;
             }
         }
-        System.out.println("Error in update(Resume r) method: Resume with uuid = " + r.getUuid() + " not in the Resumes");
+        System.out.println("Error: " + r.getUuid() + " is not updated");
     }
 
     public void save(Resume r) {
-        if (size == 9999) {
-            System.out.println("Error in save(Resume r) method: Resumes is full");
+        if (size == storage.length - 1) {
+            System.out.println("Error: " + r.getUuid() + " is not saved");
             return;
         }
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(r.getUuid())) {
-                System.out.println("Error in save(Resume r) method: Resume with uuid = " + r.getUuid() + " exist in the Resumes");
+                System.out.println("Error: " + r.getUuid() + " is not saved");
                 return;
             }
         }
@@ -52,24 +52,22 @@ public class ArrayStorage {
                 return storage[i];
             }
         }
-        System.out.println("Error in get(String uuid) method: Resume with uuid = " + uuid + " not in the Resumes");
+        System.out.println("Error: " + uuid + " is not got");
         return null;
     }
 
     public void delete(String uuid) {
-        if (uuid.equals(storage[size - 1].getUuid())) {
-            storage[size - 1] = null;
-            size--;
-        }
-        for (int i = 0; i < size - 1; i++) {
-            if (uuid.equals(storage[i].getUuid())) {
-                System.arraycopy(storage, i + 1, storage, i, size - i - 1);
+        for (int i = 0; i < size; i++) {
+            if (uuid.equals(storage[size - 1].getUuid())) {
+                if (i != size - 1) {
+                    System.arraycopy(storage, i + 1, storage, i, size - i - 1);
+                }
                 storage[size - 1] = null;
                 size--;
                 return;
             }
         }
-        System.out.println("Error in delete(String uuid) method: Resume with uuid = " + uuid + " not in the Resumes");
+        System.out.println("Error: " + uuid + " is not deleted");
     }
 
     /**
