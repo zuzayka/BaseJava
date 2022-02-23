@@ -71,9 +71,9 @@ public class ArrayStorage {
         return Arrays.copyOf(storage, size);
     }
 
-    private int getUuidNum(String uuidCheck) {
+    private int getUuidNum(String uuidString) {
         for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(uuidCheck)) {
+            if (storage[i].getUuid().equals(uuidString)) {
                 return i;
             }
         }
