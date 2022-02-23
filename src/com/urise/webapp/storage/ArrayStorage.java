@@ -22,11 +22,9 @@ public class ArrayStorage {
     }
 
     public void update(Resume r) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(r.getUuid())) {
-                storage[i] = r;
-                return;
-            }
+        if (getUuidNum(r.getUuid()) >= 0) {
+            storage[getUuidNum(r.getUuid())] = r;
+            return;
         }
         System.out.println("Error: " + r.getUuid() + " is not updated");
     }
@@ -36,21 +34,17 @@ public class ArrayStorage {
             System.out.println("Error: " + r.getUuid() + " is not saved");
             return;
         }
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(r.getUuid())) {
-                System.out.println("Error: " + r.getUuid() + " is not saved");
-                return;
-            }
+        if (getUuidNum(r.getUuid()) >= 0) {
+            System.out.println("Error: " + r.getUuid() + " is not saved");
+            return;
         }
         storage[size] = r;
         size++;
     }
 
     public Resume get(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (storage[i].getUuid().equals(uuid)) {
-                return storage[i];
-            }
+        if (getUuidNum(uuid) >= 0) {
+            return storage[getUuidNum(uuid)];
         }
         System.out.println("Error: " + uuid + " is not got");
         return null;
@@ -75,5 +69,14 @@ public class ArrayStorage {
      */
     public Resume[] getAll() {
         return Arrays.copyOf(storage, size);
+    }
+
+    private int getUuidNum(String uuidCheck) {
+        for (int i = 0; i < size; i++) {
+            if (storage[i].getUuid().equals(uuidCheck)) {
+                return i;
+            }
+        }
+        return -1;
     }
 }
