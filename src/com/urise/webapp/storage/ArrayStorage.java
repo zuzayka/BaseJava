@@ -56,7 +56,7 @@ public class ArrayStorage {
     public void delete(String uuid) {
         int index = findIndex(uuid);
         if (index >= 0) {
-            if (index < size - 2) {
+            if (index < size - 1) {
                 System.arraycopy(storage, index + 1, storage, index, size - index - 1);
             }
             storage[size - 1] = null;
@@ -73,9 +73,10 @@ public class ArrayStorage {
         return Arrays.copyOf(storage, size);
     }
 
-    private int findIndex(String uuidString) {
+    public int findIndex(String uuidString) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuidString)) {
+                System.out.println("index " + i);            // delete
                 return i;
             }
         }
