@@ -32,7 +32,7 @@ public class ArrayStorage {
 
     public void save(Resume r) {
         String uuid = r.getUuid();
-        if (size == storage.length - 1) {
+        if (size == storage.length) {
             System.out.println("Error: " + uuid + " is not saved");
             return;
         }
