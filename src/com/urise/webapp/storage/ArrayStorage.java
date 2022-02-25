@@ -22,20 +22,23 @@ public class ArrayStorage {
     }
 
     public void update(Resume r) {
-        if (getUuidNum(r.getUuid()) >= 0) {
-            storage[getUuidNum(r.getUuid())] = r;
+        int index = findIndex(r.getUuid());
+        if (index >= 0) {
+            storage[index] = r;
             return;
         }
         System.out.println("Error: " + r.getUuid() + " is not updated");
     }
 
     public void save(Resume r) {
+        String uuid = r.getUuid();
         if (size == storage.length - 1) {
-            System.out.println("Error: " + r.getUuid() + " is not saved");
+            System.out.println("Error: " + uuid + " is not saved");
             return;
         }
-        if (getUuidNum(r.getUuid()) >= 0) {
-            System.out.println("Error: " + r.getUuid() + " is not saved");
+        int index = findIndex(uuid);
+        if (index >= 0) {
+            System.out.println("Error: " + uuid + " is not saved");
             return;
         }
         storage[size] = r;
@@ -43,23 +46,22 @@ public class ArrayStorage {
     }
 
     public Resume get(String uuid) {
-        if (getUuidNum(uuid) >= 0) {
-            return storage[getUuidNum(uuid)];
+        if (findIndex(uuid) >= 0) {
+            return storage[findIndex(uuid)];
         }
         System.out.println("Error: " + uuid + " is not got");
         return null;
     }
 
     public void delete(String uuid) {
-        for (int i = 0; i < size; i++) {
-            if (uuid.equals(storage[size - 1].getUuid())) {
-                if (i != size - 1) {
-                    System.arraycopy(storage, i + 1, storage, i, size - i - 1);
-                }
-                storage[size - 1] = null;
-                size--;
-                return;
+        int index = findIndex(uuid);
+        if (index >= 0) {
+            if (index < size - 2) {
+                System.arraycopy(storage, index + 1, storage, index, size - index - 1);
             }
+            storage[size - 1] = null;
+            size--;
+            return;
         }
         System.out.println("Error: " + uuid + " is not deleted");
     }
@@ -71,7 +73,7 @@ public class ArrayStorage {
         return Arrays.copyOf(storage, size);
     }
 
-    private int getUuidNum(String uuidString) {
+    private int findIndex(String uuidString) {
         for (int i = 0; i < size; i++) {
             if (storage[i].getUuid().equals(uuidString)) {
                 return i;
