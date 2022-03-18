@@ -16,8 +16,9 @@ public abstract class AbstractArrayStorage implements Storage {
 
     @Override
     public Resume get(String uuid) {
-        if (findIndex(uuid) >= 0) {
-            return storage[findIndex(uuid)];
+        int index = findIndex(uuid);
+        if (index >= 0) {
+            return storage[index];
         }
         System.out.println("Error: " + uuid + " is not got");
         return null;
@@ -74,7 +75,7 @@ public abstract class AbstractArrayStorage implements Storage {
      */
     @Override
     public Resume[] getAll() {
-        return Arrays.copyOfRange(storage, 0, size);
+        return Arrays.copyOf(storage, size);
     }
 
     protected abstract void insertElement(Resume r, int index);
