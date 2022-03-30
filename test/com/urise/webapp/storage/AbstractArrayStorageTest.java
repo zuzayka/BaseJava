@@ -1,17 +1,24 @@
 package com.urise.webapp.storage;
 
-import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+// класс сделали abstract
 public abstract class AbstractArrayStorageTest {
     private Storage storage;
+
+    public AbstractArrayStorageTest(Storage storage) {
+        this.storage = storage;
+    }
+    //HW написать все тесты + тесты NotExist + overflow
+    // изменить этот код private Storage storage = new ArrayStorage();
+    // подать сюда реализацию storage
+
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";
     private static final String UUID_3 = "uuid3";
-
 
     @Before
     public void setUp() {
@@ -26,14 +33,18 @@ public abstract class AbstractArrayStorageTest {
         Assert.assertEquals(3, storage.getSize());
     }
 
+
+
     @Test
     public void get() {
     }
-
+/*
     @Test(expected = NotExistStorageException.class)
     public void getNotExist() {
         storage.get("dummy");
     }
+
+ */
 
     @Test
     public void clear() {
@@ -54,4 +65,6 @@ public abstract class AbstractArrayStorageTest {
     @Test
     public void getAll() {
     }
+
+
 }
