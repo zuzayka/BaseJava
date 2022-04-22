@@ -1,7 +1,6 @@
 package com.urise.webapp.storage;
 
 import com.urise.webapp.model.Resume;
-
 /**
  * Array based storage for Resumes
  */
@@ -14,7 +13,7 @@ public interface Storage {
 
     void save(Resume r);
 
-    Resume get(String uuid);
+    Resume getResume(String uuid);
 
     void delete(String uuid);
 

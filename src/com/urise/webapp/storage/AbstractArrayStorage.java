@@ -18,7 +18,7 @@ public abstract class AbstractArrayStorage implements Storage {
     }
 
     @Override
-    public Resume get(String uuid) {
+    public Resume getResume(String uuid) {
         int index = findIndex(uuid);
         if (index >= 0) {
             return storage[index];
