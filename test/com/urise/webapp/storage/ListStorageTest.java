@@ -42,14 +42,14 @@ public class ListStorageTest {
     public void update() throws Exception {
         Resume newResume = new Resume(UUID_4);
         storage.save(newResume);
-        assertSame(newResume, storage.get(UUID_4));
+        assertSame(newResume, storage.getResume(UUID_4));
     }
 
     @Test
     public void save() {
         storage.save(R4);
         assertSize(4);
-        assertEquals(R4, storage.get(UUID_4));
+        assertEquals(R4, storage.getResume(UUID_4));
     }
 
     @Test(expected = ExistStorageException.class)
@@ -66,7 +66,7 @@ public class ListStorageTest {
 
     @Test
     public void get() throws Exception {
-        Resume r = storage.get(UUID_1);
+        Resume r = storage.getResume(UUID_1);
         assertEquals(r.getUuid(), UUID_1);
     }
 
@@ -74,7 +74,7 @@ public class ListStorageTest {
     public void delete() throws Exception {
         storage.delete(UUID_1);
         assertSize(2);
-        storage.get(UUID_1);
+        storage.getResume(UUID_1);
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -93,7 +93,7 @@ public class ListStorageTest {
 
     @Test(expected = NotExistStorageException.class)
     public void getNotExist() {
-        storage.get("dummy");
+        storage.getResume("dummy");
     }
 
     private void assertSize(int size) {

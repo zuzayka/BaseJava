@@ -11,7 +11,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
 
     @Override
-    public Resume get(String uuid) {
+    public Resume getResume(String uuid) {
         int index = findIndex(uuid);
         if (index >= 0) {
             return storage[index];

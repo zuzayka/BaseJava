@@ -40,7 +40,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public Resume get(String uuid) {
+    public Resume getResume(String uuid) {
         int index = findIndex(uuid);
         if (index >= 0) {
             return storageList.get(index);
@@ -96,7 +96,7 @@ public class ListStorage extends AbstractStorage {
         System.out.println(listStorage.getSize());
         System.out.println(listStorage);
         System.out.println(Arrays.toString(listStorage.getAll()));
-        System.out.println(listStorage.get("uuid2"));
+        System.out.println(listStorage.getResume("uuid2"));
         listStorage.delete("uuid1");
         System.out.println(listStorage.getSize());
         System.out.println(listStorage);
