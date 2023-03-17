@@ -10,16 +10,12 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
-// класс сделали abstract
 public abstract class AbstractArrayStorageTest {
     private Storage storage;
 
     protected AbstractArrayStorageTest(Storage storage) {
         this.storage = storage;
     }
-    //HW написать все тесты + тесты NotExist + overflow
-    // изменить этот код private Storage storage = new ArrayStorage();
-    // подать сюда реализацию storage
 
     private static final String UUID_1 = "uuid1";
     private static final String UUID_2 = "uuid2";

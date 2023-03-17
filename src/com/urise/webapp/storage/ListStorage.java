@@ -1,7 +1,5 @@
 package com.urise.webapp.storage;
 
-import com.urise.webapp.exception.ExistStorageException;
-import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 
 import java.util.ArrayList;
@@ -18,48 +16,6 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    public void update(Resume r) {
-        int index = findIndex(r.getUuid());
-        if (index >= 0) {
-            storageList.set(index, r);
-            return;
-        }
-        throw new NotExistStorageException(r.getUuid());
-
-    }
-
-    @Override
-    public void save(Resume r) {
-        int index = findIndex(r.getUuid());
-        if (index >= 0) {
-            throw new ExistStorageException(r.getUuid());
-        } else {
-            storageList.add(r);
-            size++;
-        }
-    }
-
-    @Override
-    public Resume getResume(String uuid) {
-        int index = findIndex(uuid);
-        if (index >= 0) {
-            return storageList.get(index);
-        }
-        throw new NotExistStorageException(uuid);
-    }
-
-    @Override
-    public void delete(String uuid) {
-        int index = findIndex(uuid);
-        if (index >= 0) {
-            storageList.remove(index);
-            size--;
-            return;
-        }
-        throw new NotExistStorageException(uuid);
-    }
-
-    @Override
     public Resume[] getAll() {
         Resume[] resumes = new Resume[size];
         for (int i = 0; i < size; i++) {
@@ -69,7 +25,7 @@ public class ListStorage extends AbstractStorage {
     }
 
     @Override
-    protected int findIndex(String uuid) {
+    protected Object getSearchKey(String uuid) {
         for (int i = 0; i < size; i++) {
             if (uuid.equals(storageList.get(i).getUuid())) {
                 return i;
@@ -78,10 +34,43 @@ public class ListStorage extends AbstractStorage {
         return -1;
     }
 
+    protected boolean isExist(String uuid) {
+        return (int) getSearchKey(uuid) >= 0;
+    }
+
+
+    @Override
+    protected Resume doGetResume(Object searchKey) {
+        int index = (int) searchKey;
+        return storageList.get(index);
+    }
+
+    protected void doSave(Resume r) {
+        if (!isExist(r.getUuid())) {
+            storageList.add(r);
+            size++;
+        }
+    }
+
+    @Override
+    protected void doDelete(Resume r) {
+        int index = (int) getSearchKey(r.getUuid());
+        storageList.remove(index);
+        size--;
+    }
+
+    @Override
+    protected void doUpdate(Resume r){
+        int index = (int) getSearchKey(r.getUuid());
+        storageList.set(index, r);
+    }
+
     @Override
     public String toString() {
         return "ListStorage{" + "storageList=" + storageList + '}';
     }
+
+    // main for fast test ListStorage:
 
     public static void main(String[] args) {
         ListStorage listStorage = new ListStorage();
