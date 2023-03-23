@@ -3,7 +3,6 @@ package com.urise.webapp.storage;
 import com.urise.webapp.model.Resume;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class ListStorage extends AbstractStorage {
@@ -17,11 +16,7 @@ public class ListStorage extends AbstractStorage {
 
     @Override
     public Resume[] getAll() {
-        Resume[] resumes = new Resume[size];
-        for (int i = 0; i < size; i++) {
-            resumes[i] = storageList.get(i);
-        }
-        return resumes;
+        return storageList.toArray(new Resume[0]);
     }
 
     @Override
@@ -40,27 +35,25 @@ public class ListStorage extends AbstractStorage {
 
 
     @Override
-    protected Resume doGetResume(Object searchKey) {
+    protected Resume doGet(Object searchKey) {
         int index = (int) searchKey;
         return storageList.get(index);
     }
 
-    protected void doSave(Resume r) {
-        if (!isExist(r.getUuid())) {
-            storageList.add(r);
-            size++;
-        }
+    protected void doSave(Resume r, Object searchKey) {
+        storageList.add(r);
+        size++;
     }
 
     @Override
-    protected void doDelete(Resume r) {
-        int index = (int) getSearchKey(r.getUuid());
+    protected void doDelete(Object searchKey) {
+        int index = (int) searchKey;
         storageList.remove(index);
         size--;
     }
 
     @Override
-    protected void doUpdate(Resume r){
+    protected void doUpdate(Resume r) {
         int index = (int) getSearchKey(r.getUuid());
         storageList.set(index, r);
     }
@@ -68,29 +61,5 @@ public class ListStorage extends AbstractStorage {
     @Override
     public String toString() {
         return "ListStorage{" + "storageList=" + storageList + '}';
-    }
-
-    // main for fast test ListStorage:
-
-    public static void main(String[] args) {
-        ListStorage listStorage = new ListStorage();
-        final String UUID_1 = "uuid1";
-        final String UUID_2 = "uuid2";
-        String UUID_3 = "uuid3";
-        Resume r3 = new Resume(UUID_3);
-        listStorage.clear();
-        listStorage.save(new Resume(UUID_1));
-        listStorage.save(new Resume(UUID_2));
-        listStorage.save(r3);
-        System.out.println(listStorage.getSize());
-        System.out.println(listStorage);
-        System.out.println(Arrays.toString(listStorage.getAll()));
-        System.out.println(listStorage.getResume("uuid2"));
-        listStorage.delete("uuid1");
-        System.out.println(listStorage.getSize());
-        System.out.println(listStorage);
-        listStorage.clear();
-        System.out.println(listStorage.getSize());
-        System.out.println(listStorage);
     }
 }

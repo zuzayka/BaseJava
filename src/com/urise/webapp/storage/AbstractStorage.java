@@ -7,9 +7,6 @@ import com.urise.webapp.model.Resume;
 public abstract class AbstractStorage implements Storage {
     protected int size = 0;
 
-    protected Object searchKey;
-    protected final Integer NOT_EXIST_KEY = -1;
-
     @Override
     public int getSize() {
         return size;
@@ -17,27 +14,25 @@ public abstract class AbstractStorage implements Storage {
 
     @Override
     public Resume getResume(String uuid) {
-        searchKey = getExistingSearchKey(uuid);
-        return doGetResume(searchKey);
+        Object searchKey = getExistingSearchKey(uuid);
+        return doGet(searchKey);
     }
 
     @Override
     public void save(Resume r) {
-        searchKey = getNotExistingSearchKey(r.getUuid());
-        if ((int) searchKey  < 0) {
-            doSave(r);
-        }
+        Object searchKey = getNotExistingSearchKey(r.getUuid());
+        doSave(r, searchKey);
     }
 
     @Override
     public void delete(String uuid) {
-        searchKey = getExistingSearchKey(uuid);
-        doDelete(doGetResume(searchKey));
+        Object searchKey = getExistingSearchKey(uuid);
+        doDelete(searchKey);
     }
 
     @Override
     public void update(Resume r) {
-        searchKey = getExistingSearchKey(r.getUuid());
+        Object searchKey = getExistingSearchKey(r.getUuid());
         doUpdate(r);
     }
 
@@ -55,11 +50,11 @@ public abstract class AbstractStorage implements Storage {
         throw new ExistStorageException(uuid);
     }
 
-    protected abstract Resume doGetResume(Object searchKey);
+    protected abstract Resume doGet(Object searchKey);
 
-    protected abstract void doSave(Resume r);
+    protected abstract void doSave(Resume r, Object searchKey);
 
-    protected abstract void doDelete(Resume r);
+    protected abstract void doDelete(Object searchKey);
 
     protected abstract void doUpdate(Resume r);
 
