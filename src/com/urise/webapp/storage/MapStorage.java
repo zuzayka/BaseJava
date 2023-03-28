@@ -9,9 +9,13 @@ public class MapStorage extends AbstractStorage {
     protected Map<Object, Resume> storageMap = new HashMap<>();
 
     @Override
+    public int getSize() {
+        return storageMap.size();
+    }
+
+    @Override
     public void clear() {
         storageMap.clear();
-        size = 0;
     }
 
     @Override
@@ -20,29 +24,13 @@ public class MapStorage extends AbstractStorage {
     }
 
     @Override
-    protected Object getSearchKey(String uuid) {
-        if (size == 0) {
-            return uuid;
-        }
-        for (Resume r : storageMap.values()) {
-            String resumeUuid = r.getUuid();
-            if (!uuid.equals(resumeUuid)) {
-                return uuid;
-            }
-        }
-        return "Key Exist";
+    protected String getSearchKey(String uuid) {
+        return uuid;
     }
 
-    protected boolean isExist(String uuid) {
-        for (Resume r : storageMap.values()) {
-            String resumeUuid = r.getUuid();
-            if (uuid.equals(resumeUuid)) {
-                return true;
-            }
-        }
-        return false;
+    protected boolean isExist(Object searchKey) {
+        return storageMap.containsKey(searchKey);
     }
-
 
     @Override
     protected Resume doGet(Object searchKey) {
@@ -51,18 +39,15 @@ public class MapStorage extends AbstractStorage {
 
     protected void doSave(Resume r, Object searchKey) {
         storageMap.put(searchKey, r);
-        size++;
     }
 
     @Override
     protected void doDelete(Object searchKey) {
         storageMap.remove(searchKey);
-        size--;
     }
 
     @Override
-    protected void doUpdate(Resume r) {
-        Object searchKey = getSearchKey(r.getUuid());
+    protected void doUpdate(Resume r, Object searchKey) {
         storageMap.put(searchKey, r);
     }
 

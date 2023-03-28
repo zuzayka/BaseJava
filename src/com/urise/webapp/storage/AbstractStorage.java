@@ -5,13 +5,6 @@ import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 
 public abstract class AbstractStorage implements Storage {
-    protected int size = 0;
-
-    @Override
-    public int getSize() {
-        return size;
-    }
-
     @Override
     public Resume getResume(String uuid) {
         Object searchKey = getExistingSearchKey(uuid);
@@ -33,19 +26,21 @@ public abstract class AbstractStorage implements Storage {
     @Override
     public void update(Resume r) {
         Object searchKey = getExistingSearchKey(r.getUuid());
-        doUpdate(r);
+        doUpdate(r, searchKey);
     }
 
-    private Object getExistingSearchKey(String uuid) {
-        if (isExist(uuid)) {
-            return getSearchKey(uuid);
+    protected Object getExistingSearchKey(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (isExist(searchKey)) {
+            return searchKey;
         }
         throw new NotExistStorageException(uuid);
     }
 
-    private Object getNotExistingSearchKey(String uuid) {
-        if (!isExist(uuid)) {
-            return getSearchKey(uuid);
+    protected Object getNotExistingSearchKey(String uuid) {
+        Object searchKey = getSearchKey(uuid);
+        if (!isExist(searchKey)) {
+            return searchKey;
         }
         throw new ExistStorageException(uuid);
     }
@@ -56,11 +51,11 @@ public abstract class AbstractStorage implements Storage {
 
     protected abstract void doDelete(Object searchKey);
 
-    protected abstract void doUpdate(Resume r);
+    protected abstract void doUpdate(Resume r, Object searchKey);
 
     protected abstract Object getSearchKey(String uuid);
 
-    protected abstract boolean isExist(String uuid);
+    protected abstract boolean isExist(Object searchKey);
 }
 
 

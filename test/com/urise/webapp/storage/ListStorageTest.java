@@ -57,8 +57,6 @@ public class ListStorageTest {
         storage.save(R1);
     }
 
-
-
     @Test
     public void getSize() {
         assertSize(3);

@@ -56,8 +56,6 @@ public class MapStorageTest {
         storage.save(R1);
     }
 
-
-
     @Test
     public void getSize() {
         assertSize(3);
@@ -94,5 +92,5 @@ public class MapStorageTest {
 
     private void assertSize(int size) {
         assertEquals(size, storage.getSize());
-    }    
+    }
 }

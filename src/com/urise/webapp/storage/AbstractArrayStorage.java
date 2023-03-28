@@ -8,6 +8,12 @@ import java.util.Arrays;
 public abstract class AbstractArrayStorage extends AbstractStorage {
     protected static final int STORAGE_LIMIT = 10000;
     protected Resume[] storage = new Resume[STORAGE_LIMIT];
+    protected int size = 0;
+
+    @Override
+    public int getSize() {
+        return size;
+    }
 
     @Override
     public void clear() {
@@ -29,8 +35,8 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     protected abstract void fillDeletedElement(int index);
 
-    protected boolean isExist(String uuid) {
-        return (int) getSearchKey(uuid) >= 0;
+    protected boolean isExist(Object searchKey) {
+        return (int) searchKey >= 0;
     }
 
     @Override
@@ -57,8 +63,7 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size--;
     }
 
-    protected void doUpdate(Resume r){
-        int index = (int) getSearchKey(r.getUuid());
-            storage[index] = r;
+    protected void doUpdate(Resume r, Object searchKey) {
+        storage[(int) searchKey] = r;
     }
 }
