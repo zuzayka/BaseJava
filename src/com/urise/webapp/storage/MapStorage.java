@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class MapStorage extends AbstractStorage {
-    protected Map<Object, Resume> storageMap = new HashMap<>();
+    protected Map<String, Resume> storageMap = new HashMap<>();
 
     @Override
     public int getSize() {
@@ -38,7 +38,7 @@ public class MapStorage extends AbstractStorage {
     }
 
     protected void doSave(Resume r, Object searchKey) {
-        storageMap.put(searchKey, r);
+        storageMap.put((String) searchKey, r);
     }
 
     @Override
@@ -48,7 +48,7 @@ public class MapStorage extends AbstractStorage {
 
     @Override
     protected void doUpdate(Resume r, Object searchKey) {
-        storageMap.put(searchKey, r);
+        storageMap.put((String) searchKey, r);
     }
 
     @Override
