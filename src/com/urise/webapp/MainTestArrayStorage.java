@@ -4,7 +4,7 @@ import com.urise.webapp.model.Resume;
 import com.urise.webapp.storage.ArrayStorage;
 import com.urise.webapp.storage.SortedArrayStorage;
 
-import java.util.Arrays;
+import java.util.List;
 
 /**
  * Test for your com.urise.webapp.storage.ArrayStorage implementation
@@ -34,14 +34,14 @@ public class MainTestArrayStorage {
         SORTED_ARRAY_STORAGE.save(r4);
 
         System.out.println("Get r1: " + ARRAY_STORAGE.getResume(r1.getUuid()));
-        System.out.println(Arrays.toString(ARRAY_STORAGE.getAll()));
+        System.out.println(toString(ARRAY_STORAGE.getAllSorted()));
         System.out.println("Size: " + ARRAY_STORAGE.getSize());
 
         System.out.println("Get r1: " + SORTED_ARRAY_STORAGE.getResume(r1.getUuid()));
-        System.out.println(Arrays.toString(SORTED_ARRAY_STORAGE.getAll()));
+        System.out.println(toString(SORTED_ARRAY_STORAGE.getAllSorted()));
         System.out.println("Size: " + SORTED_ARRAY_STORAGE.getSize());
 
-        System.out.println("Get dummy: " + ARRAY_STORAGE.getResume("dummy"));
+//        System.out.println("Get dummy: " + ARRAY_STORAGE.getResume("dummy"));
 
         printAll();
 
@@ -53,7 +53,7 @@ public class MainTestArrayStorage {
 
         ARRAY_STORAGE.delete(r1.getUuid());
         printAll();
-        ARRAY_STORAGE.delete(r1.getUuid());
+//        ARRAY_STORAGE.delete(r1.getUuid());
 
         ARRAY_STORAGE.clear();
         printAll();
@@ -61,9 +61,17 @@ public class MainTestArrayStorage {
         System.out.println("Size: " + ARRAY_STORAGE.getSize());
     }
 
+    private static String toString(List<Resume> allSorted) {
+        StringBuilder toStr = new StringBuilder("allSorted: ");
+        for (Resume r : allSorted) {
+            toStr.append("{uuid=").append(r.getUuid()).append(", fullName=").append(r.getFullName()).append("} ");
+        }
+        return toStr.toString();
+    }
+
     static void printAll() {
         System.out.println("\nGet All");
-        for (Resume r : ARRAY_STORAGE.getAll()) {
+        for (Resume r : ARRAY_STORAGE.getAllSorted()) {
             System.out.println(r);
         }
     }
