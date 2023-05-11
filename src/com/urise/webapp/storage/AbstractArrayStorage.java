@@ -21,12 +21,12 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
         size = 0;
     }
 
-    @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> sortedResume = new ArrayList<>(List.of(Arrays.copyOf(storage, size)));
-        sortedResume.sort(RESUME_COMPARATOR);
-        return sortedResume;
-    }
+//    @Override
+//    public List<Resume> getAllSorted() {
+//        List<Resume> sortedResume = new ArrayList<>(List.of(Arrays.copyOf(storage, size)));
+//        sortedResume.sort(RESUME_COMPARATOR);
+//        return sortedResume;
+//    }
 
     @Override
     public String toString() {
@@ -67,5 +67,10 @@ public abstract class AbstractArrayStorage extends AbstractStorage {
 
     protected void doUpdate(Resume r, Object searchKey) {
         storage[(int) searchKey] = r;
+    }
+
+    @Override
+    protected List<Resume> doCopyAll() {
+        return List.of(Arrays.copyOf(storage, size));
     }
 }

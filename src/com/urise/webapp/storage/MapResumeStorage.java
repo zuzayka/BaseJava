@@ -7,25 +7,17 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class MapStorageResume extends AbstractStorage {
-    protected Map<Resume, String> storageMapResume = new HashMap<>();
+public class MapResumeStorage extends AbstractStorage {
+    protected Map<Resume, String> mapResumeStorage = new HashMap<>();
 
     @Override
     public int getSize() {
-        return storageMapResume.size();
+        return mapResumeStorage.size();
     }
 
     @Override
     public void clear() {
-        storageMapResume.clear();
-    }
-
-    @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> sortedList = new ArrayList<>(storageMapResume.keySet());
-        sortedList.sort(RESUME_COMPARATOR);
-        System.out.println(sortedList);  //  test
-        return sortedList;
+        mapResumeStorage.clear();
     }
 
     @Override
@@ -34,31 +26,31 @@ public class MapStorageResume extends AbstractStorage {
     }
 
     protected boolean isExist(Object searchKey) {
-        return storageMapResume.containsValue(searchKey);
+        return mapResumeStorage.containsValue(searchKey);
     }
 
     @Override
     protected Resume doGet(Object searchKey) {
-        return getKey(storageMapResume, (String) searchKey);
+        return getKey(mapResumeStorage, (String) searchKey);
     }
 
     protected void doSave(Resume r, Object searchKey) {
-        storageMapResume.put(r, (String) searchKey);
+        mapResumeStorage.put(r, (String) searchKey);
     }
 
     @Override
     protected void doDelete(Object searchKey) {
-        storageMapResume.remove(getKey(storageMapResume, (String) searchKey));
+        mapResumeStorage.remove(getKey(mapResumeStorage, (String) searchKey));
     }
 
     @Override
     protected void doUpdate(Resume r, Object searchKey) {
-        storageMapResume.put(r, (String) searchKey);
+        mapResumeStorage.put(r, (String) searchKey);
     }
 
     @Override
     public String toString() {
-        return "storageMapResume=" + storageMapResume;
+        return "mapResumeStorage=" + mapResumeStorage;
     }
 
     private Resume getKey(Map<Resume, String> map, String string) {
@@ -70,5 +62,10 @@ public class MapStorageResume extends AbstractStorage {
             }
         }
         return null;
+    }
+
+    @Override
+    protected List<Resume> doCopyAll() {
+        return new ArrayList<>(mapResumeStorage.keySet());
     }
 }

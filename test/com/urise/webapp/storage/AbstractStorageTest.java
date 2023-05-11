@@ -119,7 +119,7 @@ public abstract class AbstractStorageTest {
     @Test(expected = StorageException.class)
     public void saveOverflow() throws Exception {
         Assume.assumeFalse((storage instanceof ListStorage) || (storage instanceof MapStorage)
-                || (storage instanceof MapStorageResume));
+                || (storage instanceof MapResumeStorage));
         try {
             for (int i = 0; i <= AbstractArrayStorage.STORAGE_LIMIT; i++) {
                 storage.save(new Resume());

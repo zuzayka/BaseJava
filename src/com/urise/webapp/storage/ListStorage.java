@@ -18,11 +18,16 @@ public class ListStorage extends AbstractStorage {
         storageList.clear();
     }
 
+//    @Override
+//    public List<Resume> getAllSorted() {
+//        List<Resume> sortedList = storageList;
+//        sortedList.sort(RESUME_COMPARATOR);
+//        return sortedList;
+//    }
+
     @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> sortedList = storageList;
-        sortedList.sort(RESUME_COMPARATOR);
-        return sortedList;
+    protected List<Resume> doCopyAll() {
+        return storageList;
     }
 
     @Override

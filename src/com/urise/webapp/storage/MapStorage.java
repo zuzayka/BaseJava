@@ -20,11 +20,17 @@ public class MapStorage extends AbstractStorage {
         storageMap.clear();
     }
 
+//    @Override
+//    public List<Resume> getAllSorted() {
+//        List<Resume> sortedList = new ArrayList<>(storageMap.values());
+//        sortedList.sort(RESUME_COMPARATOR);
+//        return sortedList;
+//    }
+
     @Override
-    public List<Resume> getAllSorted() {
-        List<Resume> sortedList = new ArrayList<>(storageMap.values());
-        sortedList.sort(RESUME_COMPARATOR);
-        return sortedList;
+    protected List<Resume> doCopyAll() {
+        List<Resume> mapStorageList = new ArrayList<>(storageMap.values());
+        return mapStorageList;
     }
 
     @Override
@@ -41,6 +47,7 @@ public class MapStorage extends AbstractStorage {
         return storageMap.get(searchKey);
     }
 
+    @Override
     protected void doSave(Resume r, Object searchKey) {
         storageMap.put((String) searchKey, r);
     }
