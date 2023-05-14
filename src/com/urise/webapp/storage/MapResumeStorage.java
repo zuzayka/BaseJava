@@ -8,64 +8,59 @@ import java.util.List;
 import java.util.Map;
 
 public class MapResumeStorage extends AbstractStorage {
-    protected Map<Resume, String> mapResumeStorage = new HashMap<>();
+    protected Map<String, Resume> storage = new HashMap<>();
 
     @Override
     public int getSize() {
-        return mapResumeStorage.size();
+        return storage.size();
     }
 
     @Override
     public void clear() {
-        mapResumeStorage.clear();
+        storage.clear();
     }
 
     @Override
-    protected String getSearchKey(String uuid) {
-        return uuid;
+    protected Resume getSearchKey(String uuid) {
+        return storage.get(uuid);
     }
 
     protected boolean isExist(Object searchKey) {
-        return mapResumeStorage.containsValue(searchKey);
+        if (searchKey == null) {
+            return false;
+        }
+        return storage.containsValue(searchKey);
     }
 
     @Override
     protected Resume doGet(Object searchKey) {
-        return getKey(mapResumeStorage, (String) searchKey);
+        return (Resume) searchKey;
     }
 
     protected void doSave(Resume r, Object searchKey) {
-        mapResumeStorage.put(r, (String) searchKey);
+        if(searchKey == null) {
+            storage.put(r.getUuid(), r);
+        }
     }
 
     @Override
     protected void doDelete(Object searchKey) {
-        mapResumeStorage.remove(getKey(mapResumeStorage, (String) searchKey));
+        storage.remove(((Resume) searchKey).getUuid());
     }
 
     @Override
     protected void doUpdate(Resume r, Object searchKey) {
-        mapResumeStorage.put(r, (String) searchKey);
+        Resume uuidSearch = (Resume) searchKey;
+        storage.put(uuidSearch.getUuid(), r);
     }
 
     @Override
     public String toString() {
-        return "mapResumeStorage=" + mapResumeStorage;
-    }
-
-    private Resume getKey(Map<Resume, String> map, String string) {
-        for (Resume key : map.keySet()) {
-            String keyString = key.getUuid();
-            if (string.equals(keyString)) {
-
-                return key;
-            }
-        }
-        return null;
+        return "storage=" + storage;
     }
 
     @Override
     protected List<Resume> doCopyAll() {
-        return new ArrayList<>(mapResumeStorage.keySet());
+        return new ArrayList<>(storage.values());
     }
 }
