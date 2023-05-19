@@ -5,7 +5,7 @@ import com.urise.webapp.model.Resume;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ListStorage extends AbstractStorage {
+public class ListStorage extends AbstractStorage<Integer> {
     protected List<Resume> storageList = new ArrayList<>();
 
     @Override
@@ -18,20 +18,13 @@ public class ListStorage extends AbstractStorage {
         storageList.clear();
     }
 
-//    @Override
-//    public List<Resume> getAllSorted() {
-//        List<Resume> sortedList = storageList;
-//        sortedList.sort(RESUME_COMPARATOR);
-//        return sortedList;
-//    }
-
     @Override
     protected List<Resume> doCopyAll() {
-        return storageList;
+        return new ArrayList<>(storageList);
     }
 
     @Override
-    protected Object getSearchKey(String uuid) {
+    protected Integer getSearchKey(String uuid) {
         for (int i = 0; i < storageList.size(); i++) {
             if (uuid.equals(storageList.get(i).getUuid())) {
                 return i;
@@ -40,33 +33,32 @@ public class ListStorage extends AbstractStorage {
         return -1;
     }
 
-    protected boolean isExist(Object searchKey) {
-        return (int) (searchKey) >= 0;
+    protected boolean isExist(Integer searchKey) {
+        return searchKey >= 0;
     }
 
     @Override
-    protected Resume doGet(Object searchKey) {
-        int index = (int) searchKey;
-        return storageList.get(index);
+    protected Resume doGet(Integer searchKey) {
+        return storageList.get(searchKey);
     }
 
-    protected void doSave(Resume r, Object searchKey) {
+    protected void doSave(Resume r, Integer searchKey) {
         storageList.add(r);
     }
 
     @Override
-    protected void doDelete(Object searchKey) {
-        int index = (int) searchKey;
-        storageList.remove(index);
+    protected void doDelete(Integer searchKey) {
+        storageList.remove(searchKey.intValue());
     }
 
     @Override
-    protected void doUpdate(Resume r, Object searchKey) {
-        storageList.set((int) searchKey, r);
+    protected void doUpdate(Resume r, Integer searchKey) {
+        storageList.set(searchKey, r);
     }
 
     @Override
     public String toString() {
         return "ListStorage{" + "storageList=" + storageList + '}';
     }
+
 }

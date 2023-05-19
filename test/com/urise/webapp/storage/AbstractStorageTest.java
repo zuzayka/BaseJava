@@ -2,9 +2,7 @@ package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
-import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
-import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,7 +12,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertSame;
 
 public abstract class AbstractStorageTest {
-    private Storage storage;
+    protected Storage storage;
 
     protected AbstractStorageTest(Storage storage) {
         this.storage = storage;
@@ -116,18 +114,18 @@ public abstract class AbstractStorageTest {
         assertEquals(size, storage.getSize());
     }
 
-    @Test(expected = StorageException.class)
-    public void saveOverflow() throws Exception {
-        Assume.assumeFalse((storage instanceof ListStorage) || (storage instanceof MapStorage)
-                || (storage instanceof MapResumeStorage));
-        try {
-            for (int i = 0; i <= AbstractArrayStorage.STORAGE_LIMIT; i++) {
-                storage.save(new Resume());
-            }
-        } catch (StorageException e) {
-            e.printStackTrace();
-//            Assert.fail();
-        }
-        storage.save(new Resume());
-    }
+//    @Test(expected = StorageException.class)
+//    public void saveOverflow() throws Exception {
+//        Assume.assumeFalse((storage instanceof ListStorage) || (storage instanceof MapStorage)
+//                || (storage instanceof MapResumeStorage));
+//        try {
+//            for (int i = 0; i <= AbstractArrayStorage.STORAGE_LIMIT; i++) {
+//                storage.save(new Resume());
+//            }
+//        } catch (StorageException e) {
+//            e.printStackTrace();
+////            Assert.fail();
+//        }
+//        storage.save(new Resume());
+//    }
 }
