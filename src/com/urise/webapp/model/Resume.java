@@ -1,5 +1,6 @@
 package com.urise.webapp.model;
 
+import java.util.EnumMap;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -11,8 +12,9 @@ public class Resume implements Comparable<Resume> {
 
     // Unique identifier
     private final String uuid;
-    private String fullName;
-
+    private final String fullName;
+    private final EnumMap<SectionType, AbstractSection> sectionsMap = SectionType.sectionType;
+    private final EnumMap<ContactType, AbstractSection> contactMap = ContactType.contactType;
 
     public Resume() {
         this(UUID.randomUUID().toString(), UUID.randomUUID().toString());
@@ -64,7 +66,22 @@ public class Resume implements Comparable<Resume> {
 
     @Override
     public int compareTo(Resume resume) {
-        int cmp  = fullName.compareTo(resume.fullName);
-        return cmp !=0 ? cmp : uuid.compareTo(resume.uuid);
+        int cmp = fullName.compareTo(resume.fullName);
+        return cmp != 0 ? cmp : uuid.compareTo(resume.uuid);
+    }
+
+    public static void main(String[] args) {
+        final String UUID_1 = "uuid1";
+        final String UUID_2 = "uuid2";
+        final String UUID_3 = "uuid3";
+        final String UUID_4 = "uuid4";
+        final String FULL_NAME_1 = "Petrov Petr";
+        final String FULL_NAME_2 = "Ivanov Ivan";
+        final String FULL_NAME_3 = "Saidova Zuleykha";
+        final String FULL_NAME_4 = "Petrov Petr";
+        final Resume R1 = new Resume(UUID_1, FULL_NAME_1);
+        final Resume R2 = new Resume(UUID_2, FULL_NAME_2);
+        final Resume R3 = new Resume(UUID_3, FULL_NAME_3);
+        final Resume R4 = new Resume(UUID_4, FULL_NAME_4);
     }
 }
