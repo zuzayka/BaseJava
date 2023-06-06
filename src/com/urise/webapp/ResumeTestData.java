@@ -6,8 +6,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 
 import static com.urise.webapp.model.ContactType.*;
-import static com.urise.webapp.model.Resume.contactType;
-import static com.urise.webapp.model.Resume.sectionType;
+//import static com.urise.webapp.model.Resume.contactType;
 import static com.urise.webapp.model.SectionType.*;
 
 public class ResumeTestData {
@@ -81,19 +80,19 @@ public class ResumeTestData {
                         " Oracle, MySQL, SQLite, MS SQL, HSQLDB");
 
 
-        contactType.put(PHONE, "+7(921) 855-0482");
-        contactType.put(SKYPE, "skype:grigory.kislin");
-        contactType.put(NET_PROFILE, "https://github.com/gkislin");
-        contactType.put(HOME_PAGE, "http://gkislin.ru/");
+        R.contactType.put(PHONE, "+7(921) 855-0482");
+        R.contactType.put(SKYPE, "skype:grigory.kislin");
+        R.contactType.put(NET_PROFILE, "https://github.com/gkislin");
+        R.contactType.put(HOME_PAGE, "http://gkislin.ru/");
 
-        sectionType.put(PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность," +
+        R.sectionType.put(PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность," +
                 " инициативность. Пурист кода и архитектуры"));
-        sectionType.put(OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web" +
+        R.sectionType.put(OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web" +
                 " и Enterprise технологиям"));
-        sectionType.put(EXPERIENCE, new OrganizationSection(experienceList));
-        sectionType.put(EDUCATION, new OrganizationSection(educationList));
-        sectionType.put(ACHIEVEMENT, new ListSection(achievementList));
-        sectionType.put(QUALIFICATIONS, new ListSection(qualificationList));
+        R.sectionType.put(EXPERIENCE, new OrganizationSection(experienceList));
+        R.sectionType.put(EDUCATION, new OrganizationSection(educationList));
+        R.sectionType.put(ACHIEVEMENT, new ListSection(achievementList));
+        R.sectionType.put(QUALIFICATIONS, new ListSection(qualificationList));
         System.out.println(R);
     }
 }
