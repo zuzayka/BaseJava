@@ -1,9 +1,12 @@
 package com.urise.webapp.model;
 
+import java.util.Objects;
+
 public class TextSection extends AbstractSection {
     private final String text;
 
     public TextSection(String text) {
+        Objects.requireNonNull(text, "text mast not be null");  //задаем условие
         this.text = text;
     }
 

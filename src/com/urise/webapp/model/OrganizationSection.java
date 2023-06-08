@@ -1,15 +1,17 @@
 package com.urise.webapp.model;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 public class OrganizationSection extends AbstractSection {
-    private final ArrayList<Organization> list;
+    private final List<Organization> list;
 
-    public OrganizationSection(ArrayList<Organization> list) {
+    public OrganizationSection(List<Organization> list) {
+        Objects.requireNonNull(list, "List<Organizations> mast not be null");  //задаем условие
         this.list = list;
     }
 
-    public ArrayList<Organization> getList() {
+    public List<Organization> getList() {
         return list;
     }
 

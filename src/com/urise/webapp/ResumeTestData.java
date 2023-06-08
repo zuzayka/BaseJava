@@ -2,11 +2,16 @@ package com.urise.webapp;
 
 import com.urise.webapp.model.*;
 
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 import static com.urise.webapp.model.ContactType.*;
-//import static com.urise.webapp.model.Resume.contactType;
 import static com.urise.webapp.model.SectionType.*;
 
 public class ResumeTestData {
@@ -94,5 +99,20 @@ public class ResumeTestData {
         R.sectionType.put(ACHIEVEMENT, new ListSection(achievementList));
         R.sectionType.put(QUALIFICATIONS, new ListSection(qualificationList));
         System.out.println(R);
+        Date date = new Date();
+        System.out.println(date);
+        System.out.println(System.currentTimeMillis() );
+        Calendar calendar = Calendar.getInstance();
+        System.out.println(calendar.getTime());
+        LocalDate ld = LocalDate.now();
+        LocalTime lt = LocalTime.now();
+        LocalDateTime ldt = LocalDateTime.of(ld, lt);
+        System.out.println(ldt);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd/hh:mm");
+        System.out.println( sdf.format(date));
+        System.out.println( sdf.format(2000003463334L));
+        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd/hh:mm");
+
+        System.out.println(dtf.format(ldt));
     }
 }

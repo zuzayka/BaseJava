@@ -8,8 +8,7 @@ public class Organization {
     protected String webSite;
     protected ArrayList<Period> periods;
 
-    public Organization(String name,
-                        String webSite, ArrayList<Period> periods) {
+    public Organization(String name, String webSite, ArrayList<Period> periods) {
         this.name = name;
         this.webSite = webSite;
         this.periods = periods;

@@ -1,16 +1,18 @@
 package com.urise.webapp.model;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 
 public class ListSection extends AbstractSection {
-    private final ArrayList<String> list;
+    private final List<String> list;
 
-    public ListSection(ArrayList<String> list) {
+    public ListSection(List<String> list) {
+        Objects.requireNonNull(list, "List<String> mast not be null");  //задаем условие
         this.list = list;
     }
 
-    public ArrayList<String> getList() {
+    public List<String> getList() {
         return list;
     }
 
