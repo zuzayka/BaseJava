@@ -3,32 +3,51 @@ package com.urise.webapp.util;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.Objects;
+import java.util.Arrays;
 
 public class MainFile {
     public static void main(String[] args) {
-        String filePath = "./gitignore";
+        String filePath = "./.gitignore";
         File file = new File(filePath);
         try {
             System.out.println(file.getCanonicalPath());
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        File dir = new File("./test/com/urise/webapp/storage");
-        try {
-            System.out.println(dir.getCanonicalPath());
-        } catch (IOException e) {
-            throw new RuntimeException("Error", e);
-        }
-        System.out.println(dir.isDirectory());
-        for (String name : Objects.requireNonNull(dir.list())) {
-            System.out.println(name);;
-        }
+//        File dir = new File("./test/com/urise/webapp/storage");
+//        try {
+//            System.out.println(dir.getCanonicalPath());
+//        } catch (IOException e) {
+//            throw new RuntimeException("Error", e);
+//        }
+//        System.out.println(dir.isDirectory());
+//        for (String name : Objects.requireNonNull(dir.list())) {
+//            System.out.println(name);;
+//        }
+
+        showDirs(new StringBuilder("/home/miux/Java/basejava/src"), "");
 
         try (FileInputStream fis = new FileInputStream(filePath)) {
-            System.out.println(fis.read());
+            System.out.println((char) fis.read());
         } catch (IOException e) {
             throw new RuntimeException(e);
+        }
+    }
+
+    public static void  showDirs(StringBuilder sB, String gap) {
+        File dir = new File(String.valueOf(sB));
+        int i = 0;
+        String[] dirList = dir.list();
+        if (dirList != null) {
+            Arrays.sort(dirList);
+            if (dir.isDirectory()) {
+                for (String s : dirList) {
+                    String temp = sB.toString();
+                    System.out.println(gap + s);
+                    StringBuilder sB1 = new StringBuilder(temp + "/" + s);
+                    showDirs(sB1, gap + "  ");
+                }
+            }
         }
     }
 }
