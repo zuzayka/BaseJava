@@ -26,7 +26,6 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     public int getSize() {
         File[] arrayFile = directory.listFiles();
-        boolean b = arrayFile == null;
         if (arrayFile != null) {
             return arrayFile.length;
         } else {
@@ -39,7 +38,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         File[] arrayFile = directory.listFiles();
         if (arrayFile != null) {
             for (File f : arrayFile) {
-                f.delete();
+                doDelete(f);
             }
         } else {
             throw new StorageException("IO error", arrayFile);
@@ -55,11 +54,6 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
     @Override
     protected boolean isExist(File file) {
         return file.exists();
-    }
-
-    @Override
-    public Resume getResume(String uuid) {
-        return super.getResume(uuid);
     }
 
     @Override
@@ -83,10 +77,10 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
 
     @Override
     protected void doDelete(File file) {
-        try {
+        if (!file.delete()){
+            throw new StorageException("IO error", file.getName());
+        } else  {
             file.delete();
-        } catch (Exception e) {
-            throw new StorageException("IO error", file.getName(), e);
         }
     }
 
@@ -105,11 +99,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> {
         List<Resume> list = new ArrayList<>();
         if (arrayFile != null) {
             for (File f : arrayFile) {
-                try {
                     list.add(doGet(f));
-                } catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
             }
         } else {
             throw new StorageException("IO error", arrayFile);
