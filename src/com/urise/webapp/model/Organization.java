@@ -6,15 +6,17 @@ import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
+
 import static com.urise.webapp.util.DateUtil.NOW;
 
 public class Organization {
     protected String name;
     protected String webSite;
-    protected ArrayList<Period> periods;
+    protected List<Period> periods;
 
-    public Organization(String name, String webSite, ArrayList<Period> periods) {
+    public Organization(String name, String webSite, List<Period> periods) {
         this.name = name;
         this.webSite = webSite;
         this.periods = periods;

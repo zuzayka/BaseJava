@@ -28,9 +28,9 @@ public abstract class AbstractStorageTest {
     private static final String FULL_NAME_3 = "Saidova Zuleykha";
     private static final String FULL_NAME_4 = "Petrov Petr";
     public static final Resume R1 = ResumeTestData.resumeFill(UUID_1, FULL_NAME_1);
-    public static final Resume R2 = new Resume(UUID_2, FULL_NAME_2);
-    public static final Resume R3 = new Resume(UUID_3, FULL_NAME_3);
-    public static final Resume R4 = new Resume(UUID_4, FULL_NAME_4);
+    public static final Resume R2 = ResumeTestData.resumeFill(UUID_2, FULL_NAME_2);
+    public static final Resume R3 = ResumeTestData.resumeFill(UUID_3, FULL_NAME_3);
+    public static final Resume R4 = ResumeTestData.resumeFill(UUID_4, FULL_NAME_4);
 
     @Before
     public void setUp() throws Exception {
