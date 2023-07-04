@@ -13,7 +13,6 @@ public class ResumeTestData {
     public static Resume resumeFill(String uuid, String fullName) {
         Resume r = new Resume(uuid, fullName);
 
-
         final LocalDate startMFTIS = LocalDate.of(1984, 9, 1);
         final LocalDate stopMFTIS = LocalDate.of(1987, 6, 1);
         final String titleMFTIS = "";
