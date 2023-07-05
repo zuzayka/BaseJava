@@ -36,7 +36,6 @@ public class MainFile {
 
     public static void  showDirs(StringBuilder sB, String gap) {
         File dir = new File(String.valueOf(sB));
-        int i = 0;
         String[] dirList = dir.list();
         if (dirList != null) {
             Arrays.sort(dirList);

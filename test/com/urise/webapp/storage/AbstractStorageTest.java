@@ -34,7 +34,6 @@ public abstract class AbstractStorageTest {
 
     @Before
     public void setUp() throws Exception {
-        Resume.resumeFill(R1);
         storage.clear();
         storage.save(R2);
         storage.save(R1);
