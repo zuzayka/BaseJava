@@ -4,22 +4,23 @@ import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 
-public abstract class AbstractFileStorage extends AbstractStorage<File> implements Serializable{
-    private File directory;
+public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+    private Path directory;
 
-    protected AbstractFileStorage(File directory) {
+    protected AbstractPathStorage(String dir) {
+        directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory mast not be null");
-        if (!directory.isDirectory()) {
-            throw new IllegalArgumentException(directory.getAbsolutePath() + "is not directory");
+        if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
+            throw new IllegalArgumentException(dir + "is not directory");
         }
-        if (!directory.canRead() || !directory.canWrite()) {
-            throw new IllegalArgumentException(directory.getAbsolutePath() + "is not readable/writable");
-        }
-        this.directory = directory;
     }
 
     @Override
@@ -34,20 +35,42 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> implemen
 
     @Override
     public void clear() {
-        File[] arrayFile = directory.listFiles();
-        if (arrayFile != null) {
-            for (File f : arrayFile) {
-                doDelete(f);
-            }
-        } else {
-            throw new StorageException("IO error", arrayFile);
+        try {
+            Files.list(directory).forEach(this::doDelete);
+        } catch (IOException e) {
+            throw new StorageException("Path delete error", null);
         }
     }
 
 
     @Override
+    protected Resume doGet(Path searchKey) {
+        return null;
+    }
+
+    @Override
+    protected void doSave(Resume r, Path searchKey) {
+
+    }
+
+    @Override
+    protected void doDelete(Path searchKey) {
+
+    }
+
+    @Override
+    protected void doUpdate(Resume r, Path searchKey) {
+
+    }
+
+    @Override
     protected File getSearchKey(String uuid) {
         return new File(directory, uuid);
+    }
+
+    @Override
+    protected boolean isExist(Path searchKey) {
+        return false;
     }
 
     @Override
@@ -77,9 +100,9 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> implemen
 
     @Override
     protected void doDelete(File file) {
-        if (!file.delete()){
+        if (!file.delete()) {
             throw new StorageException("IO error", file.getName());
-        } else  {
+        } else {
             file.delete();
         }
     }
@@ -99,7 +122,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> implemen
         List<Resume> list = new ArrayList<>();
         if (arrayFile != null) {
             for (File f : arrayFile) {
-                    list.add(doGet(f));
+                list.add(doGet(f));
             }
         } else {
             throw new StorageException("Directory read error", arrayFile);

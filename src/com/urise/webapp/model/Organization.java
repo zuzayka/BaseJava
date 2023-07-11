@@ -2,6 +2,7 @@ package com.urise.webapp.model;
 
 import com.urise.webapp.util.DateUtil;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.format.DateTimeFormatter;
@@ -11,7 +12,7 @@ import java.util.Objects;
 
 import static com.urise.webapp.util.DateUtil.NOW;
 
-public class Organization {
+public class Organization implements Serializable {
     protected String name;
     protected String webSite;
     protected List<Period> periods;
@@ -47,7 +48,8 @@ public class Organization {
         return result;
     }
 
-    public static class Period {
+    public static class Period implements Serializable {
+        private static final long serialVersionUID = 1L;
         protected LocalDate startDate;
         protected LocalDate endDate;
         protected String title;
@@ -57,13 +59,11 @@ public class Organization {
             this(DateUtil.of(startYear, startMonth), NOW, title, description);
         }
 
-        public Period(int startYear, Month startMonth, int endYear, Month endMonth,
-                      String title, String description) {
+        public Period(int startYear, Month startMonth, int endYear, Month endMonth, String title, String description) {
             this(DateUtil.of(startYear, startMonth), DateUtil.of(endYear, endMonth), title, description);
         }
 
-        public Period(LocalDate startDate, LocalDate endDate,
-                      String title, String description) {
+        public Period(LocalDate startDate, LocalDate endDate, String title, String description) {
             Objects.requireNonNull(startDate, "startDate must not be null");
             Objects.requireNonNull(endDate, "endDate must not be null");
             Objects.requireNonNull(title, "title must not be null");
@@ -73,7 +73,7 @@ public class Organization {
             this.description = description;
         }
 
-        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MM/yyyy");
+//        DateTimeFormatter fmt = DateTimeFormatter.ofPattern("MM/yyyy");
 
         public LocalDate getStartDate() {
             return startDate;
@@ -93,8 +93,10 @@ public class Organization {
 
         @Override
         public String toString() {
-            return "Period{" + "startDate=" + startDate.format(fmt) + ", endDate=" + endDate.format(fmt)
-                    + ", title='" + title + '\'' + ", description='" + description + '}';
+//            return "Period{" + "startDate=" + "startDate.format(fmt)" + ", endDate=" + "endDate.format(fmt)" + "," +
+//                    " title='" + title + '\'' + ", description='" + description + '}';
+            return "Period{" + "startDate=" + startDate + ", endDate=" + endDate + "," +
+                    " title='" + title + '\'' + ", description='" + description + '}';
         }
 
         @Override
@@ -108,7 +110,8 @@ public class Organization {
             if (!Objects.equals(endDate, period.endDate)) return false;
             if (!Objects.equals(title, period.title)) return false;
             if (!Objects.equals(description, period.description)) return false;
-            return Objects.equals(fmt, period.fmt);
+//            return Objects.equals(fmt, period.fmt);
+            return true;
         }
 
         @Override
@@ -117,7 +120,7 @@ public class Organization {
             result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
             result = 31 * result + (title != null ? title.hashCode() : 0);
             result = 31 * result + (description != null ? description.hashCode() : 0);
-            result = 31 * result + (fmt != null ? fmt.hashCode() : 0);
+//            result = 31 * result + (fmt != null ? fmt.hashCode() : 0);
             return result;
         }
     }

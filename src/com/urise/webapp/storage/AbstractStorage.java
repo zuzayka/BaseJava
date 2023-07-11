@@ -4,11 +4,12 @@ import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
 import com.urise.webapp.model.Resume;
 
+import java.io.Serializable;
 import java.util.Comparator;
 import java.util.List;
 import java.util.logging.Logger;
 
-public abstract class AbstractStorage<SK> implements Storage {
+public abstract class AbstractStorage<SK> implements Storage, Serializable {
     private static final Logger LOG = Logger.getLogger(AbstractStorage.class.getName());
     public static final Comparator<Resume> RESUME_COMPARATOR =
             Comparator.comparing(Resume::getFullName).

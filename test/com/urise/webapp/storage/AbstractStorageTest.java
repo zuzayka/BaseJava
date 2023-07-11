@@ -7,12 +7,13 @@ import com.urise.webapp.model.Resume;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.File;
 import java.util.List;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
+import static org.junit.Assert.*;
 
 public abstract class AbstractStorageTest {
+    protected static final File STORAGE_DIR = new File("/home/miux/Java/basejava/storage");
     protected Storage storage;
 
     protected AbstractStorageTest(Storage storage) {
@@ -32,6 +33,11 @@ public abstract class AbstractStorageTest {
     public static final Resume R3 = ResumeTestData.resumeFill(UUID_3, FULL_NAME_3);
     public static final Resume R4 = ResumeTestData.resumeFill(UUID_4, FULL_NAME_4);
 
+//    public static final Resume R1 = new Resume(UUID_1, FULL_NAME_1);
+//    public static final Resume R2 = new Resume(UUID_2, FULL_NAME_2);
+//    public static final Resume R3 = new Resume(UUID_3, FULL_NAME_3);
+//    public static final Resume R4 = new Resume(UUID_4, FULL_NAME_4);
+
     @Before
     public void setUp() throws Exception {
         storage.clear();
@@ -48,8 +54,11 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void get() throws Exception {
-        Resume r = storage.getResume(UUID_1);
-        assertEquals(r.getUuid(), UUID_1);
+        assertGet(R1);
+        assertGet(R2);
+        assertGet(R3);
+//        Resume r = storage.getResume(UUID_1);
+//        assertEquals(r.getUuid(), UUID_1);
     }
 
     @Test
@@ -62,7 +71,8 @@ public abstract class AbstractStorageTest {
     public void save() throws Exception {
         storage.save(R4);
         assertSize(4);
-        assertEquals(R4, storage.getResume(UUID_4));
+//        assertEquals(R4, storage.getResume(UUID_4));
+        assertGet(R4);
     }
 
     @Test(expected = ExistStorageException.class)
@@ -86,7 +96,8 @@ public abstract class AbstractStorageTest {
     public void update() throws Exception {
         Resume newResume = new Resume(UUID_4, FULL_NAME_4);
         storage.save(newResume);
-        assertSame(newResume, storage.getResume(UUID_4));
+        storage.update(newResume);
+        assertTrue(newResume.equals(storage.getResume(UUID_4)));
     }
 
     @Test(expected = NotExistStorageException.class)
@@ -109,6 +120,10 @@ public abstract class AbstractStorageTest {
     @Test(expected = NotExistStorageException.class)
     public void getNotExist() {
         storage.getResume("dummy");
+    }
+
+    private void assertGet(Resume r) {
+        assertEquals(r, storage.getResume(r.getUuid()));
     }
 
     private void assertSize(int size) {

@@ -2,6 +2,7 @@ package com.urise.webapp;
 
 import com.urise.webapp.model.*;
 
+import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
@@ -9,43 +10,9 @@ import java.util.List;
 import static com.urise.webapp.model.ContactType.*;
 import static com.urise.webapp.model.SectionType.*;
 
-public class ResumeTestData {
+public class ResumeTestData implements Serializable {
     public static Resume resumeFill(String uuid, String fullName) {
         Resume r = new Resume(uuid, fullName);
-
-        final LocalDate startMFTIS = LocalDate.of(1984, 9, 1);
-        final LocalDate stopMFTIS = LocalDate.of(1987, 6, 1);
-        final String titleMFTIS = "";
-        final String descriptionMFTIS = "Закончил с отличием";
-        final Organization.Period periodMFTIS = new Organization.Period(startMFTIS, stopMFTIS, titleMFTIS, descriptionMFTIS);
-        final String nameMFTIS = "Заочная физико-техническая школа при МФТИ";
-        final String webSiteMFTIS = "https://mipt.ru";
-        final List<Organization.Period> listMFTIS = new ArrayList<>();
-        listMFTIS.add(periodMFTIS);
-        final Organization orgMFTIS = new Organization(nameMFTIS, webSiteMFTIS, listMFTIS);
-
-        final LocalDate startSPBU1 = LocalDate.of(1987, 9, 1);
-        final LocalDate stopSPBU1 = LocalDate.of(1993, 7, 1);
-        final String titleSPBU1 = "Инженер (программист Fortran, C)";
-        final String descriptionSPBU1 = "";
-        final Organization.Period periodSPBU1 = new Organization.Period(startSPBU1, stopSPBU1, titleSPBU1, descriptionSPBU1);
-
-        final LocalDate startSPBU2 = LocalDate.of(1993, 9, 1);
-        final LocalDate stopSPBU2 = LocalDate.of(1996, 7, 1);
-        final String titleSPBU2 = "Аспирантура (программист С, С++))";
-        final String descriptionSPBU2 = "";
-        final Organization.Period periodSPBU2 = new Organization.Period(startSPBU2, stopSPBU2, titleSPBU2, descriptionSPBU2);
-
-        final String nameSPBU = "Санкт-Петербургский национальный исследовательский университет " + "информационных технологий, механики и оптики";
-        final String webSiteSPBU = "http://www.ifmo.ru";
-        final ArrayList<Organization.Period> listSPBU = new ArrayList<>();
-        listSPBU.add(periodSPBU1);
-        listSPBU.add(periodSPBU2);
-        final Organization orgSPBU = new Organization(nameSPBU, webSiteSPBU, listSPBU);
-        List<Organization> educationList = new ArrayList<>();
-        educationList.add(orgMFTIS);
-        educationList.add(orgSPBU);
-        r.addSection(EDUCATION, new OrganizationSection(educationList));
 
         final LocalDate startAlcatel = LocalDate.of(1997, 9, 1);
         final LocalDate stopAlcatel = LocalDate.of(2005, 1, 1);
