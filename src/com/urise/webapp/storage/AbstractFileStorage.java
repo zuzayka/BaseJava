@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractFileStorage extends AbstractStorage<File> implements Serializable{
+public abstract class AbstractFileStorage extends AbstractStorage<File> implements Serializable {
     private File directory;
 
     protected AbstractFileStorage(File directory) {
@@ -24,23 +24,13 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> implemen
 
     @Override
     public int getSize() {
-        File[] arrayFile = directory.listFiles();
-        if (arrayFile != null) {
-            return arrayFile.length;
-        } else {
-            throw new StorageException("IO error", arrayFile);
-        }
+        return arrayFile().length;
     }
 
     @Override
     public void clear() {
-        File[] arrayFile = directory.listFiles();
-        if (arrayFile != null) {
-            for (File f : arrayFile) {
-                doDelete(f);
-            }
-        } else {
-            throw new StorageException("IO error", arrayFile);
+        for (File f : arrayFile()) {
+            doDelete(f);
         }
     }
 
@@ -68,7 +58,6 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> implemen
     protected void doSave(Resume r, File file) {
         try {
             file.createNewFile();
-//            doWrite(r, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("Couldn't create file " + file.getAbsolutePath(), file.getName(), e);
         }
@@ -77,10 +66,8 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> implemen
 
     @Override
     protected void doDelete(File file) {
-        if (!file.delete()){
+        if (!file.delete()) {
             throw new StorageException("IO error", file.getName());
-        } else  {
-            file.delete();
         }
     }
 
@@ -95,16 +82,20 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> implemen
 
     @Override
     protected List<Resume> doCopyAll() {
-        File[] arrayFile = directory.listFiles();
         List<Resume> list = new ArrayList<>();
-        if (arrayFile != null) {
-            for (File f : arrayFile) {
-                    list.add(doGet(f));
-            }
-        } else {
-            throw new StorageException("Directory read error", arrayFile);
+        for (File f : arrayFile()) {
+            list.add(doGet(f));
         }
         return list;
+    }
+
+    private File[] arrayFile() {
+        File[] array = directory.listFiles();
+        if (array != null) {
+            return array;
+        } else {
+            throw new StorageException("IO error", array);
+        }
     }
 
     protected abstract void doWrite(Resume r, OutputStream os) throws IOException;

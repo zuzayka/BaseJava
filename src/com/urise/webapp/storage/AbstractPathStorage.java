@@ -16,8 +16,8 @@ import java.util.Objects;
 public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     private Path directory;
 
-    protected AbstractPathStorage(Path directory) {
-//        directory = Paths.get(dir);
+    protected AbstractPathStorage(String dir) {
+        directory = Paths.get(dir);
         Objects.requireNonNull(directory, "directory mast not be null");
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(directory + "is not directory");
@@ -29,9 +29,8 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         try {
             return (int) Files.list(directory).count();
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new StorageException("Directory read error", null);
         }
-        return 0;
     }
 
     @Override
@@ -49,31 +48,36 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         try {
             return doRead(new BufferedInputStream(new FileInputStream(path.toFile())));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new StorageException("Path read error", path.getFileName().toString(), e);
         }
-        return null;
     }
 
     @Override
     protected void doSave(Resume r, Path path) {
         try {
+            Files.createFile(path);
             doWrite(r, new BufferedOutputStream(new FileOutputStream(path.toFile())));
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new StorageException("Couldn't create Path " + path.toFile().getAbsolutePath(), path.getFileName().toString(), e);
         }
     }
 
     @Override
     protected void doDelete(Path path) {
-        if (path.toFile().exists()) {
-            path.toFile().delete();
+        try {
+            Files.delete(path);
+        } catch (IOException e) {
+            throw new StorageException("Path delete error", path.getFileName().toString());
         }
     }
 
     @Override
     protected void doUpdate(Resume r, Path path) {
-        doDelete(path);
-        doSave(r, path);
+        try {
+            doWrite(r, new BufferedOutputStream(new FileOutputStream(path.toFile())));
+        } catch (IOException e) {
+            throw new StorageException("File write error", path.getFileName().toString(), e);
+        }
     }
 
     @Override
@@ -83,7 +87,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
 
     @Override
     protected boolean isExist(Path searchKey) {
-        return false;
+        return Files.exists(searchKey);
     }
 
     @Override
@@ -94,7 +98,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
                 list.add(doGet(p));
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            throw new StorageException("Directory read error", null);
         }
         return list;
     }
