@@ -6,9 +6,9 @@ import com.urise.webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamStorage extends AbstractFileStorage implements ObjectStreamStorageInterface {
-    protected ObjectStreamStorage(File directory) {
-        super(directory);
+public class ObjectStreamStorage extends FileStorage implements SerializerStraregy {
+    protected ObjectStreamStorage(File directory, SerializerStraregy straregy) {
+        super(directory, straregy);
     }
 
     @Override
@@ -29,7 +29,8 @@ public class ObjectStreamStorage extends AbstractFileStorage implements ObjectSt
 
     public static void main(String[] args) {
         final File STORAGE_DIR = new File("/home/miux/Java/basejava/storage");
-        Storage storage = new ObjectStreamStorage(STORAGE_DIR);
+        final SerializerStraregy STORAGE_SERIALIZER = new ObjectStreamSerializer();
+        Storage storage = new ObjectStreamStorage(STORAGE_DIR, STORAGE_SERIALIZER);
         final String UUID_1 = "uuid1";
         final String UUID_2 = "uuid2";
         final String UUID_3 = "uuid3";

@@ -5,12 +5,7 @@ import com.urise.webapp.model.Resume;
 
 import java.io.*;
 
-public class ObjectStreamPathStorage extends PathStorage implements SerializerStraregy {
-
-
-    protected ObjectStreamPathStorage(String dir, SerializerStraregy straregy) {
-        super(dir, straregy);
-    }
+public class ObjectStreamSerializer implements SerializerStraregy{
 
     @Override
     public void doWrite(Resume r, OutputStream os) throws IOException {

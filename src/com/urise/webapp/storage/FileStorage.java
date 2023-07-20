@@ -8,10 +8,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractFileStorage extends AbstractStorage<File> implements Serializable {
-    private File directory;
+public class FileStorage extends AbstractStorage<File> implements Serializable {
+    private final File directory;
+    private final SerializerStraregy straregy;
 
-    protected AbstractFileStorage(File directory) {
+    protected FileStorage(File directory, SerializerStraregy straregy) {
         Objects.requireNonNull(directory, "directory mast not be null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + "is not directory");
@@ -20,6 +21,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> implemen
             throw new IllegalArgumentException(directory.getAbsolutePath() + "is not readable/writable");
         }
         this.directory = directory;
+        this.straregy = straregy;
     }
 
     @Override
@@ -48,7 +50,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> implemen
     @Override
     protected Resume doGet(File file) {
         try {
-            return doRead(new BufferedInputStream(new FileInputStream(file)));
+            return straregy.doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File read error", file.getName(), e);
         }
@@ -74,7 +76,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> implemen
     @Override
     protected void doUpdate(Resume r, File file) {
         try {
-            doWrite(r, new BufferedOutputStream(new FileOutputStream(file)));
+            straregy.doWrite(r, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File write error", file.getName(), e);
         }
@@ -98,7 +100,7 @@ public abstract class AbstractFileStorage extends AbstractStorage<File> implemen
         }
     }
 
-    protected abstract void doWrite(Resume r, OutputStream os) throws IOException;
-
-    protected abstract Resume doRead(InputStream is) throws IOException;
+//    protected abstract void doWrite(Resume r, OutputStream os) throws IOException;
+//
+//    protected abstract Resume doRead(InputStream is) throws IOException;
 }

@@ -13,15 +13,17 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractPathStorage extends AbstractStorage<Path> {
+public class PathStorage extends AbstractStorage<Path> {
     private Path directory;
+    private SerializerStraregy straregy;
 
-    protected AbstractPathStorage(String dir) {
-        directory = Paths.get(dir);
+    protected PathStorage(String dir, SerializerStraregy straregy) {
         Objects.requireNonNull(directory, "directory mast not be null");
         if (!Files.isDirectory(directory) || !Files.isWritable(directory)) {
             throw new IllegalArgumentException(directory + "is not directory");
         }
+        directory = Paths.get(dir);
+        this.straregy = straregy;
     }
 
     @Override
@@ -46,7 +48,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     protected Resume doGet(Path path) {
         try {
-            return doRead(new BufferedInputStream(new FileInputStream(path.toFile())));
+            return straregy.doRead(new BufferedInputStream(new FileInputStream(path.toFile())));
         } catch (IOException e) {
             throw new StorageException("Path read error", path.getFileName().toString(), e);
         }
@@ -56,7 +58,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     protected void doSave(Resume r, Path path) {
         try {
             Files.createFile(path);
-            doWrite(r, new BufferedOutputStream(new FileOutputStream(path.toFile())));
+            straregy.doWrite(r, new BufferedOutputStream(new FileOutputStream(path.toFile())));
         } catch (IOException e) {
             throw new StorageException("Couldn't create Path " + path.toFile().getAbsolutePath(), path.getFileName().toString(), e);
         }
@@ -74,7 +76,7 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
     @Override
     protected void doUpdate(Resume r, Path path) {
         try {
-            doWrite(r, new BufferedOutputStream(new FileOutputStream(path.toFile())));
+            straregy.doWrite(r, new BufferedOutputStream(new FileOutputStream(path.toFile())));
         } catch (IOException e) {
             throw new StorageException("File write error", path.getFileName().toString(), e);
         }
@@ -103,13 +105,14 @@ public abstract class AbstractPathStorage extends AbstractStorage<Path> {
         return list;
     }
 
-    protected abstract void doWrite(Resume r, OutputStream os) throws IOException;
-
-    protected abstract Resume doRead(InputStream is) throws IOException;
+//    protected abstract void doWrite(Resume r, OutputStream os) throws IOException;
+//
+//    protected abstract Resume doRead(InputStream is) throws IOException;
 
     public static void main(String[] args) {
         final Path STORAGE_DIR = new File("/home/miux/Java/basejava/storage").toPath();
-        Storage storage = new ObjectStreamStorage(STORAGE_DIR.toFile());
+        final SerializerStraregy STORAGE_SERIALIZER = new ObjectStreamSerializer();
+        Storage storage = new ObjectStreamStorage(STORAGE_DIR.toFile(), STORAGE_SERIALIZER);
         final String UUID_1 = "uuid1";
         final String UUID_2 = "uuid2";
         final String UUID_3 = "uuid3";
