@@ -1,8 +1,8 @@
 package com.urise.webapp.storage;
 
-import com.urise.webapp.ResumeTestData;
 import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.storage.strategy.SerializerStraregy;
 
 import java.io.*;
 import java.nio.file.DirectoryStream;
@@ -109,7 +109,7 @@ public class PathStorage extends AbstractStorage<Path> {
 //
 //    protected abstract Resume doRead(InputStream is) throws IOException;
 
-    public static void main(String[] args) {
+/*    public static void main(String[] args) {
         final Path STORAGE_DIR = new File("/home/miux/Java/basejava/storage").toPath();
         final SerializerStraregy STORAGE_SERIALIZER = new ObjectStreamSerializer();
         Storage storage = new ObjectStreamStorage(STORAGE_DIR.toFile(), STORAGE_SERIALIZER);
@@ -129,5 +129,5 @@ public class PathStorage extends AbstractStorage<Path> {
         storage.save(R2);
         storage.save(R1);
         storage.save(R3);
-    }
+    }*/
 }
