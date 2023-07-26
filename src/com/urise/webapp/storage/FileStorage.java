@@ -9,11 +9,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
-public class FileStorage extends AbstractStorage<File> implements Serializable {
+public class FileStorage extends AbstractStorage<File> {
     private final File directory;
-    private final SerializerStraregy straregy;
+    private final SerializerStraregy strategy;
 
-    public FileStorage(File directory, SerializerStraregy straregy) {
+    public FileStorage(File directory, SerializerStraregy strategy) {
         Objects.requireNonNull(directory, "directory mast not be null");
         if (!directory.isDirectory()) {
             throw new IllegalArgumentException(directory.getAbsolutePath() + "is not directory");
@@ -22,7 +22,7 @@ public class FileStorage extends AbstractStorage<File> implements Serializable {
             throw new IllegalArgumentException(directory.getAbsolutePath() + "is not readable/writable");
         }
         this.directory = directory;
-        this.straregy = straregy;
+        this.strategy = strategy;
     }
 
     @Override
@@ -51,7 +51,7 @@ public class FileStorage extends AbstractStorage<File> implements Serializable {
     @Override
     protected Resume doGet(File file) {
         try {
-            return straregy.doRead(new BufferedInputStream(new FileInputStream(file)));
+            return strategy.doRead(new BufferedInputStream(new FileInputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File read error", file.getName(), e);
         }
@@ -77,7 +77,7 @@ public class FileStorage extends AbstractStorage<File> implements Serializable {
     @Override
     protected void doUpdate(Resume r, File file) {
         try {
-            straregy.doWrite(r, new BufferedOutputStream(new FileOutputStream(file)));
+            strategy.doWrite(r, new BufferedOutputStream(new FileOutputStream(file)));
         } catch (IOException e) {
             throw new StorageException("File write error", file.getName(), e);
         }
@@ -100,8 +100,4 @@ public class FileStorage extends AbstractStorage<File> implements Serializable {
             throw new StorageException("IO error", array);
         }
     }
-
-//    protected abstract void doWrite(Resume r, OutputStream os) throws IOException;
-//
-//    protected abstract Resume doRead(InputStream is) throws IOException;
 }
