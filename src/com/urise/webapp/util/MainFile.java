@@ -14,16 +14,6 @@ public class MainFile {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-//        File dir = new File("./test/com/urise/webapp/storage");
-//        try {
-//            System.out.println(dir.getCanonicalPath());
-//        } catch (IOException e) {
-//            throw new RuntimeException("Error", e);
-//        }
-//        System.out.println(dir.isDirectory());
-//        for (String name : Objects.requireNonNull(dir.list())) {
-//            System.out.println(name);;
-//        }
 
         showDirs(new StringBuilder("/home/miux/Java/basejava/src"), "");
 
