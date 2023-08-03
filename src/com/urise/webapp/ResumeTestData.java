@@ -4,6 +4,7 @@ import com.urise.webapp.model.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,29 +18,28 @@ public class ResumeTestData implements Serializable {
         final LocalDate startAlcatel = LocalDate.of(1997, 9, 1);
         final LocalDate stopAlcatel = LocalDate.of(2005, 1, 1);
         final String titleAlcatel = "Инженер по аппаратному и программному тестированию";
-        final String descriptionAlcatel = "";
+        final String descriptionAlcatel = "\n";
         final Organization.Period periodAlcatel = new Organization.Period(startAlcatel, stopAlcatel, titleAlcatel, descriptionAlcatel);
         final String nameAlcatel = "Alcatel";
         final String webSiteAlcatel = "http://www.alcatel.ru";
         final List<Organization.Period> listAlcatel = new ArrayList<>();
         listAlcatel.add(periodAlcatel);
         final Organization orgAlcatel = new Organization(nameAlcatel, webSiteAlcatel, listAlcatel);
-        System.out.println(orgAlcatel);
         List<Organization> experienceList = new ArrayList<>();
         experienceList.add(orgAlcatel);
         r.addSection(EXPERIENCE, new OrganizationSection(experienceList));
 
         final List<String> achievementList = new ArrayList<>() {{
-        add("Организация команды и успешная реализация Java проектов для сторонних заказчиков: " + "приложения автопарк на стеке Spring Cloud/микросервисы, система мониторинга показателей " + "спортсменов на Spring Boot, участие в проекте МЭШ на Play-2, многомодульный Spring Boot + " + "Vaadin проект для комплексных DIY смет");
-        add("С 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\"," + " \"Многомодульный maven. Многопоточность. XML (JAXB/StAX). Веб сервисы (JAX-RS/SOAP)." + " Удаленное взаимодействие (JMS/AKKA)\". Организация онлайн стажировок и ведение проектов." + " Более 3500 выпускников.");
-        add("Реализация двухфакторной аутентификации для онлайн платформы управления проектами" + " Wrike. Интеграция с Twilio, DuoSecurity, Google Authenticator, Jira, Zendesk.");
+        add("\nОрганизация команды и успешная реализация Java проектов для сторонних заказчиков: " + "приложения автопарк на стеке Spring Cloud/микросервисы, система мониторинга показателей " + "спортсменов на Spring Boot, участие в проекте МЭШ на Play-2, многомодульный Spring Boot + " + "Vaadin проект для комплексных DIY смет");
+        add("\nС 2013 года: разработка проектов \"Разработка Web приложения\",\"Java Enterprise\"," + " \"Многомодульный maven. Многопоточность. XML (JAXB/StAX). Веб сервисы (JAX-RS/SOAP)." + " Удаленное взаимодействие (JMS/AKKA)\". Организация онлайн стажировок и ведение проектов." + " Более 3500 выпускников.");
+        add("\nРеализация двухфакторной аутентификации для онлайн платформы управления проектами" + " Wrike. Интеграция с Twilio, DuoSecurity, Google Authenticator, Jira, Zendesk.");
         }};
         r.addSection(ACHIEVEMENT, new ListSection(achievementList));
 
         final List<String> qualificationList = new ArrayList<>() {{
-                add("JEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2");
-                add("Version control: Subversion, Git, Mercury, ClearCase, Perforce");
-                add("DB: PostgreSQL(наследование, pgplsql, PL/Python), Redis (Jedis), H2," + " Oracle, MySQL, SQLite, MS SQL, HSQLDB");
+                add("\nJEE AS: GlassFish (v2.1, v3), OC4J, JBoss, Tomcat, Jetty, WebLogic, WSO2");
+                add("\nVersion control: Subversion, Git, Mercury, ClearCase, Perforce");
+                add("\nDB: PostgreSQL(наследование, pgplsql, PL/Python), Redis (Jedis), H2," + " Oracle, MySQL, SQLite, MS SQL, HSQLDB");
             }};
         r.addSection(QUALIFICATIONS, new ListSection(qualificationList));
 
@@ -57,6 +57,29 @@ public class ResumeTestData implements Serializable {
 
     public static void main(String[] args) {
         Resume r = resumeFill("uuid1", "Григорий Кислин");
-        System.out.println(r);
+        System.out.println("PERSONAL");
+        System.out.println(r.getSection(PERSONAL));
+        System.out.println();
+        System.out.println("OBJECTIVE");
+        System.out.println(r.getSection(OBJECTIVE));
+        System.out.println();
+        System.out.println("ACHIEVEMENT");
+        System.out.println(r.getSection(ACHIEVEMENT));
+        System.out.println();
+        System.out.println("QUALIFICATIONS");
+        System.out.println(r.getSection(QUALIFICATIONS));
+        System.out.println();
+        System.out.println("EXPERIENCE");
+        System.out.println(r.getSection(EXPERIENCE));
+        System.out.println();
+        System.out.println("EDUCATION");
+        System.out.println(r.getSection(EDUCATION));
+        System.out.println();
+
+        System.out.println(LocalDate.now());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        String str = "1997-09-01";
+        LocalDate ld = LocalDate.parse(str, formatter);
+        System.out.println(ld);
     }
 }

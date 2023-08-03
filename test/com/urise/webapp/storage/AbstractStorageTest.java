@@ -10,7 +10,8 @@ import org.junit.Test;
 import java.io.File;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractStorageTest {
     protected static final File STORAGE_DIR = new File("/home/miux/Java/basejava/storage");
@@ -94,9 +95,12 @@ public abstract class AbstractStorageTest {
 
     @Test
     public void update() throws Exception {
-        Resume newResume = new Resume(UUID_4, FULL_NAME_4);
+        Resume newResume = ResumeTestData.resumeFill(UUID_4, FULL_NAME_4);
         storage.save(newResume);
         storage.update(newResume);
+        System.out.println(storage.getResume(UUID_4));
+        System.out.println();
+        System.out.println(newResume);
         assertTrue(newResume.equals(storage.getResume(UUID_4)));
     }
 

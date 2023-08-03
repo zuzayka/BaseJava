@@ -1,9 +1,6 @@
 package com.urise.webapp.model;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-
-@XmlAccessorType(XmlAccessType.FIELD)
+//@XmlAccessorType(XmlAccessType.FIELD)
 public enum SectionType {
     PERSONAL("Личные качества"),
     OBJECTIVE("Позиция"),
@@ -13,9 +10,6 @@ public enum SectionType {
     EDUCATION("Образование");
 
     private String title;
-
-    SectionType() {
-    }
 
     SectionType(String title) {
         this.title = title;

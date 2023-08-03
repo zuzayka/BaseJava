@@ -34,7 +34,7 @@ public class Organization implements Serializable {
 
     @Override
     public String toString() {
-        return "Organization{" + "name='" + name + '\'' + ", webSite='" + webSite + '\'' + ", periods=" + periods + '}';
+        return "\nOrganization{" + "\nname='" + name + '\'' + ", \nwebSite='" + webSite + '\'' + ", \nperiods=" + periods + '}';
     }
 
     @Override
@@ -55,6 +55,18 @@ public class Organization implements Serializable {
         result = 31 * result + (webSite != null ? webSite.hashCode() : 0);
         result = 31 * result + (periods != null ? periods.hashCode() : 0);
         return result;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getWebSite() {
+        return webSite;
+    }
+
+    public List<Period> getPeriods() {
+        return periods;
     }
 
     @XmlAccessorType(XmlAccessType.FIELD)
@@ -111,8 +123,8 @@ public class Organization implements Serializable {
         public String toString() {
 //            return "Period{" + "startDate=" + "startDate.format(fmt)" + ", endDate=" + "endDate.format(fmt)" + "," +
 //                    " title='" + title + '\'' + ", description='" + description + '}';
-            return "Period{" + "startDate=" + startDate + ", endDate=" + endDate + "," +
-                    " title='" + title + '\'' + ", description='" + description + '}';
+            return "\nPeriod{" + "startDate=" + startDate + ", \nendDate=" + endDate + "," +
+                    " \ntitle='" + title + '\'' + ", \ndescription='" + description + '}';
         }
 
         @Override
