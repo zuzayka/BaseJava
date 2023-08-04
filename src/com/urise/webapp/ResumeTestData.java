@@ -4,7 +4,6 @@ import com.urise.webapp.model.*;
 
 import java.io.Serializable;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,35 +50,5 @@ public class ResumeTestData implements Serializable {
         r.addSection(PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность," + " инициативность. Пурист кода и архитектуры"));
         r.addSection(OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web" + " и Enterprise технологиям"));
         return r;
-    }
-
-//    ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-    public static void main(String[] args) {
-        Resume r = resumeFill("uuid1", "Григорий Кислин");
-        System.out.println("PERSONAL");
-        System.out.println(r.getSection(PERSONAL));
-        System.out.println();
-        System.out.println("OBJECTIVE");
-        System.out.println(r.getSection(OBJECTIVE));
-        System.out.println();
-        System.out.println("ACHIEVEMENT");
-        System.out.println(r.getSection(ACHIEVEMENT));
-        System.out.println();
-        System.out.println("QUALIFICATIONS");
-        System.out.println(r.getSection(QUALIFICATIONS));
-        System.out.println();
-        System.out.println("EXPERIENCE");
-        System.out.println(r.getSection(EXPERIENCE));
-        System.out.println();
-        System.out.println("EDUCATION");
-        System.out.println(r.getSection(EDUCATION));
-        System.out.println();
-
-        System.out.println(LocalDate.now());
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        String str = "1997-09-01";
-        LocalDate ld = LocalDate.parse(str, formatter);
-        System.out.println(ld);
     }
 }
