@@ -29,11 +29,8 @@ public class DataStreamSerializer implements SerializerStraregy {
 
             Map<SectionType, AbstractSection> sections = r.getSectionType();
             for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet() ) {
-                System.out.println("Map.Entry: " + entry.getKey().getTitle());
-                writeSection(dos, r, entry.getKey().getTitle());
-
+                writeSection(dos, r, entry.getKey());
             }
-            dos.writeUTF("END");
         }
     }
 
@@ -50,29 +47,18 @@ public class DataStreamSerializer implements SerializerStraregy {
 
 //            sections
 
-            String s;
-            while (true) {
-                s = dis.readUTF();
-                if (s.equals("END")) {
-                    break;
-                } else {
-                    readSection(dis, r, s);
-                }
+            for (SectionType s : SectionType.values()) {
+                readSection(dis, r, s);
             }
             return r;
         }
     }
 
     private void writeStringSection(Resume r, DataOutputStream dos, SectionType sectionType) throws IOException {
-        if (r.getSection(sectionType) != null) {
-            dos.writeUTF(sectionType.getTitle());
             dos.writeUTF(((TextSection) r.getSection(sectionType)).getText());
-        }
     }
 
     private void writeListSection(Resume r, DataOutputStream dos, SectionType sectionType) throws IOException {
-        if (r.getSection(sectionType) != null) {
-            dos.writeUTF(sectionType.getTitle());
             ListSection listSection = ((ListSection) r.getSection(sectionType));
             ArrayList<String> arrayList = (ArrayList) listSection.getList();
             int size = arrayList.size();
@@ -81,7 +67,6 @@ public class DataStreamSerializer implements SerializerStraregy {
                 dos.writeBoolean(true);
                 dos.writeUTF(arrayList.get(i));
             }
-        }
     }
 
     private void readListSection(DataInputStream dis, Resume r, SectionType sectionType) throws IOException {
@@ -95,43 +80,40 @@ public class DataStreamSerializer implements SerializerStraregy {
         r.addSection(sectionType, new ListSection(arrayList));
     }
 
-    private void  writeSection(DataOutputStream dos, Resume r, String s) throws IOException {
+    private void  writeSection(DataOutputStream dos, Resume r, SectionType s) throws IOException {
         switch (s) {
-            case "Личные качества" -> writeStringSection(r, dos, PERSONAL);
-            case "Позиция" -> writeStringSection(r, dos, OBJECTIVE);
-            case "Достижения" -> writeListSection(r, dos, ACHIEVEMENT);
-            case "Квалификация" -> writeListSection(r, dos, QUALIFICATIONS);
-            case "Опыт работы" -> {
-                if (r.getSection(EXPERIENCE) != null) {
-                    dos.writeUTF(EXPERIENCE.getTitle());
-                    List<Organization> orgList = getOrganizationList(r, EXPERIENCE);
-                    int orgListSize = orgList.size();
-                    dos.writeInt(orgListSize);
-                    for (Organization org : orgList) {
-                        dos.writeUTF(org.getName());
-                        dos.writeUTF(org.getWebSite());
-                        List<Organization.Period> prdList = org.getPeriods();
-                        int prdListSize = prdList.size();
-                        dos.writeInt(prdListSize);
-                        for (Organization.Period op : prdList) {
-                            dos.writeUTF(op.getStartDate().toString());
-                            dos.writeUTF(op.getEndDate().toString());
-                            dos.writeUTF(op.getTitle());
-                            dos.writeUTF(op.getDescription());
-                        }
+            case PERSONAL -> writeStringSection(r, dos, PERSONAL);
+            case OBJECTIVE -> writeStringSection(r, dos, OBJECTIVE);
+            case ACHIEVEMENT -> writeListSection(r, dos, ACHIEVEMENT);
+            case QUALIFICATIONS -> writeListSection(r, dos, QUALIFICATIONS);
+            case EXPERIENCE -> {
+                List<Organization> orgList = getOrganizationList(r, EXPERIENCE);
+                int orgListSize = orgList.size();
+                dos.writeInt(orgListSize);
+                for (Organization org : orgList) {
+                    dos.writeUTF(org.getName());
+                    dos.writeUTF(org.getWebSite());
+                    List<Organization.Period> prdList = org.getPeriods();
+                    int prdListSize = prdList.size();
+                    dos.writeInt(prdListSize);
+                    for (Organization.Period op : prdList) {
+                        dos.writeUTF(op.getStartDate().toString());
+                        dos.writeUTF(op.getEndDate().toString());
+                        dos.writeUTF(op.getTitle());
+                        dos.writeUTF(op.getDescription());
                     }
                 }
             }
         }
     }
 
-    private void readSection(DataInputStream dis, Resume r, String s) throws IOException {
+    private void readSection(DataInputStream dis, Resume r, SectionType s) throws IOException {
         switch (s) {
-            case "Личные качества" -> r.addSection(PERSONAL, new TextSection(dis.readUTF()));
-            case "Позиция" -> r.addSection(OBJECTIVE, new TextSection(dis.readUTF()));
-            case "Достижения" -> readListSection(dis, r, ACHIEVEMENT);
-            case "Квалификация" -> readListSection(dis, r, QUALIFICATIONS);
-            case "Опыт работы" -> {
+            case PERSONAL -> r.addSection(PERSONAL, new TextSection(dis.readUTF()));
+            case OBJECTIVE -> r.addSection(OBJECTIVE, new TextSection(dis.readUTF()));
+            case ACHIEVEMENT -> readListSection(dis, r, ACHIEVEMENT);
+            case QUALIFICATIONS -> readListSection(dis, r, QUALIFICATIONS);
+            case EXPERIENCE -> {
                 List<Organization> orgList = new ArrayList<>();
                 int orgListSize = dis.readInt();
                 for (int i = 0; i < orgListSize; i++) {
