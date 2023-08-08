@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.urise.webapp.ResumeTestData.resumeFill;
 import static com.urise.webapp.model.SectionType.*;
 
 public class DataStreamSerializer implements SerializerStraregy {
@@ -138,15 +137,5 @@ public class DataStreamSerializer implements SerializerStraregy {
 
     private List<Organization> getOrganizationList(Resume r, SectionType sectionType) {
         return ((OrganizationSection) r.getSection(sectionType)).getList();
-    }
-
-    public static void main(String[] args) throws IOException {
-        Resume r = resumeFill("uuid1", "Григорий Кислин");
-        DataOutputStream dos = new DataOutputStream(new FileOutputStream("/home/miux/Java/basejava/storage/resumeFile"));
-        DataInputStream dis = new DataInputStream(new FileInputStream("/home/miux/Java/basejava/storage/resumeFile"));
-        DataStreamSerializer dss = new DataStreamSerializer();
-        dss.doWrite(r, dos);
-        Resume r1 = dss.doRead(dis);
-        System.out.println(r1);
     }
 }
