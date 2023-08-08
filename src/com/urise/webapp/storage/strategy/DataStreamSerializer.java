@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import static com.urise.webapp.ResumeTestData.resumeFill;
 import static com.urise.webapp.model.SectionType.*;
 
 public class DataStreamSerializer implements SerializerStraregy {
@@ -28,7 +29,7 @@ public class DataStreamSerializer implements SerializerStraregy {
 //            sections
 
             Map<SectionType, AbstractSection> sections = r.getSectionType();
-            for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet() ) {
+            for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
                 writeSection(dos, r, entry.getKey());
             }
         }
@@ -47,31 +48,31 @@ public class DataStreamSerializer implements SerializerStraregy {
 
 //            sections
 
-            for (SectionType s : SectionType.values()) {
-                readSection(dis, r, s);
+            for (SectionType sectionType : SectionType.values()) {
+                readSection(dis, r, sectionType);
             }
             return r;
         }
     }
 
     private void writeStringSection(Resume r, DataOutputStream dos, SectionType sectionType) throws IOException {
-            dos.writeUTF(((TextSection) r.getSection(sectionType)).getText());
+        dos.writeUTF(((TextSection) r.getSection(sectionType)).getText());
     }
 
     private void writeListSection(Resume r, DataOutputStream dos, SectionType sectionType) throws IOException {
-            ListSection listSection = ((ListSection) r.getSection(sectionType));
-            ArrayList<String> arrayList = (ArrayList) listSection.getList();
-            int size = arrayList.size();
-            dos.writeInt(arrayList.size());
-            for (int i = 0; i < size; i++) {
-                dos.writeBoolean(true);
-                dos.writeUTF(arrayList.get(i));
-            }
+        ListSection listSection = ((ListSection) r.getSection(sectionType));
+        List<String> arrayList = (ArrayList) listSection.getList();
+        int size = arrayList.size();
+        dos.writeInt(arrayList.size());
+        for (int i = 0; i < size; i++) {
+            dos.writeBoolean(true);
+            dos.writeUTF(arrayList.get(i));
+        }
     }
 
     private void readListSection(DataInputStream dis, Resume r, SectionType sectionType) throws IOException {
         int size = dis.readInt();
-        ArrayList<String> arrayList = new ArrayList<>();
+        List<String> arrayList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
             if (dis.readBoolean()) {
                 arrayList.add(dis.readUTF());
@@ -80,12 +81,10 @@ public class DataStreamSerializer implements SerializerStraregy {
         r.addSection(sectionType, new ListSection(arrayList));
     }
 
-    private void  writeSection(DataOutputStream dos, Resume r, SectionType s) throws IOException {
-        switch (s) {
-            case PERSONAL -> writeStringSection(r, dos, PERSONAL);
-            case OBJECTIVE -> writeStringSection(r, dos, OBJECTIVE);
-            case ACHIEVEMENT -> writeListSection(r, dos, ACHIEVEMENT);
-            case QUALIFICATIONS -> writeListSection(r, dos, QUALIFICATIONS);
+    private void writeSection(DataOutputStream dos, Resume r, SectionType sectionType) throws IOException {
+        switch (sectionType) {
+            case PERSONAL, OBJECTIVE -> writeStringSection(r, dos, sectionType);
+            case ACHIEVEMENT, QUALIFICATIONS -> writeListSection(r, dos, sectionType);
             case EXPERIENCE -> {
                 List<Organization> orgList = getOrganizationList(r, EXPERIENCE);
                 int orgListSize = orgList.size();
@@ -107,8 +106,8 @@ public class DataStreamSerializer implements SerializerStraregy {
         }
     }
 
-    private void readSection(DataInputStream dis, Resume r, SectionType s) throws IOException {
-        switch (s) {
+    private void readSection(DataInputStream dis, Resume r, SectionType sectionType) throws IOException {
+        switch (sectionType) {
             case PERSONAL -> r.addSection(PERSONAL, new TextSection(dis.readUTF()));
             case OBJECTIVE -> r.addSection(OBJECTIVE, new TextSection(dis.readUTF()));
             case ACHIEVEMENT -> readListSection(dis, r, ACHIEVEMENT);
@@ -138,7 +137,16 @@ public class DataStreamSerializer implements SerializerStraregy {
     }
 
     private List<Organization> getOrganizationList(Resume r, SectionType sectionType) {
-        List<Organization> ol = ((OrganizationSection) r.getSection(sectionType)).getList();
-        return ol;
+        return ((OrganizationSection) r.getSection(sectionType)).getList();
+    }
+
+    public static void main(String[] args) throws IOException {
+        Resume r = resumeFill("uuid1", "Григорий Кислин");
+        DataOutputStream dos = new DataOutputStream(new FileOutputStream("/home/miux/Java/basejava/storage/resumeFile"));
+        DataInputStream dis = new DataInputStream(new FileInputStream("/home/miux/Java/basejava/storage/resumeFile"));
+        DataStreamSerializer dss = new DataStreamSerializer();
+        dss.doWrite(r, dos);
+        Resume r1 = dss.doRead(dis);
+        System.out.println(r1);
     }
 }
