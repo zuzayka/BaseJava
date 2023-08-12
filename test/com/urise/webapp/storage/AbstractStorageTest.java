@@ -98,9 +98,6 @@ public abstract class AbstractStorageTest {
         Resume newResume = ResumeTestData.resumeFill(UUID_4, FULL_NAME_4);
         storage.save(newResume);
         storage.update(newResume);
-        System.out.println(storage.getResume(UUID_4));
-        System.out.println();
-        System.out.println(newResume);
         assertTrue(newResume.equals(storage.getResume(UUID_4)));
     }
 

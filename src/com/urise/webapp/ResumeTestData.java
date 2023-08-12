@@ -14,6 +14,21 @@ public class ResumeTestData implements Serializable {
     public static Resume resumeFill(String uuid, String fullName) {
         Resume r = new Resume(uuid, fullName);
 
+        final LocalDate startMftiSchool = LocalDate.of(1984, 9, 1);
+        final LocalDate stopMftiSchool = LocalDate.of(1987, 6, 1);
+        final String titleMftiSchool = "Закончил с отличием";
+        final String descriptionMftiSchool = "\n";
+        final Organization.Period periodMftiSchool = new Organization.Period(startMftiSchool, stopMftiSchool, titleMftiSchool, descriptionMftiSchool);
+        final String nameMftiSchool = "Заочная физико-техническая школа при МФТИ";
+        final String webSiteMftiSchool = "https://mipt.ru";
+        final List<Organization.Period> listMftiSchool = new ArrayList<>();
+        listMftiSchool.add(periodMftiSchool);
+        final Organization orgMftiSchool = new Organization(nameMftiSchool, webSiteMftiSchool, listMftiSchool);
+        List<Organization> educationList = new ArrayList<>();
+        educationList.add(orgMftiSchool);
+        r.addSection(EDUCATION, new OrganizationSection(educationList));
+
+
         final LocalDate startAlcatel = LocalDate.of(1997, 9, 1);
         final LocalDate stopAlcatel = LocalDate.of(2005, 1, 1);
         final String titleAlcatel = "Инженер по аппаратному и программному тестированию";

@@ -6,10 +6,9 @@ import java.io.*;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-
-import static com.urise.webapp.model.SectionType.*;
 
 public class DataStreamSerializer implements SerializerStraregy {
     DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
@@ -63,19 +62,27 @@ public class DataStreamSerializer implements SerializerStraregy {
         List<String> arrayList = (ArrayList) listSection.getList();
         int size = arrayList.size();
         dos.writeInt(arrayList.size());
-        for (int i = 0; i < size; i++) {
-            dos.writeBoolean(true);
-            dos.writeUTF(arrayList.get(i));
-        }
+//        for (int i = 0; i < size; i++) {
+//            dos.writeUTF(arrayList.get(i));
+//        }
+        writeWithException(arrayList, dos);
+    }
+
+    private <T> void writeWithException(Collection<T> collection, DataOutputStream dos){
+        collection.forEach(item -> {
+            try {
+                dos.writeUTF(item.toString());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     private void readListSection(DataInputStream dis, Resume r, SectionType sectionType) throws IOException {
         int size = dis.readInt();
         List<String> arrayList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-            if (dis.readBoolean()) {
                 arrayList.add(dis.readUTF());
-            }
         }
         r.addSection(sectionType, new ListSection(arrayList));
     }
@@ -84,8 +91,8 @@ public class DataStreamSerializer implements SerializerStraregy {
         switch (sectionType) {
             case PERSONAL, OBJECTIVE -> writeStringSection(r, dos, sectionType);
             case ACHIEVEMENT, QUALIFICATIONS -> writeListSection(r, dos, sectionType);
-            case EXPERIENCE -> {
-                List<Organization> orgList = getOrganizationList(r, EXPERIENCE);
+            case EXPERIENCE, EDUCATION -> {
+                List<Organization> orgList = getOrganizationList(r, sectionType);
                 int orgListSize = orgList.size();
                 dos.writeInt(orgListSize);
                 for (Organization org : orgList) {
@@ -107,11 +114,9 @@ public class DataStreamSerializer implements SerializerStraregy {
 
     private void readSection(DataInputStream dis, Resume r, SectionType sectionType) throws IOException {
         switch (sectionType) {
-            case PERSONAL -> r.addSection(PERSONAL, new TextSection(dis.readUTF()));
-            case OBJECTIVE -> r.addSection(OBJECTIVE, new TextSection(dis.readUTF()));
-            case ACHIEVEMENT -> readListSection(dis, r, ACHIEVEMENT);
-            case QUALIFICATIONS -> readListSection(dis, r, QUALIFICATIONS);
-            case EXPERIENCE -> {
+            case PERSONAL, OBJECTIVE -> r.addSection(sectionType, new TextSection(dis.readUTF()));
+            case ACHIEVEMENT, QUALIFICATIONS -> readListSection(dis, r, sectionType);
+            case EXPERIENCE, EDUCATION -> {
                 List<Organization> orgList = new ArrayList<>();
                 int orgListSize = dis.readInt();
                 for (int i = 0; i < orgListSize; i++) {
@@ -130,7 +135,7 @@ public class DataStreamSerializer implements SerializerStraregy {
                     Organization org = new Organization(name, webSite, prdList);
                     orgList.add(org);
                 }
-                r.addSection(EXPERIENCE, new OrganizationSection(orgList));
+                r.addSection(sectionType, new OrganizationSection(orgList));
             }
         }
     }
