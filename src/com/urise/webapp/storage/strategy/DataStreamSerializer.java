@@ -18,14 +18,10 @@ public class DataStreamSerializer implements SerializerStraregy {
         try (DataOutputStream dos = new DataOutputStream(os)) {
             dos.writeUTF(r.getUuid());
             dos.writeUTF(r.getFullName());
-            Map<ContactType, String> contacts = r.getContactType();
-            dos.writeInt(contacts.size());
-            for (Map.Entry<ContactType, String> entry : contacts.entrySet()) {
+            writeWithException(r.getContactType().entrySet(), dos, entry -> {
                 dos.writeUTF(entry.getKey().name());
                 dos.writeUTF(entry.getValue());
-            }
-//            sections
-
+            });
             Map<SectionType, AbstractSection> sections = r.getSectionType();
             for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
                 writeSection(dos, r, entry.getKey());
@@ -43,9 +39,6 @@ public class DataStreamSerializer implements SerializerStraregy {
             for (int i = 0; i < size; i++) {
                 r.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             }
-
-//            sections
-
             for (SectionType sectionType : SectionType.values()) {
                 readSection(dis, r, sectionType);
             }
@@ -62,20 +55,16 @@ public class DataStreamSerializer implements SerializerStraregy {
         List<String> arrayList = (ArrayList) listSection.getList();
         int size = arrayList.size();
         dos.writeInt(arrayList.size());
-//        for (int i = 0; i < size; i++) {
-//            dos.writeUTF(arrayList.get(i));
-//        }
-        writeWithException(arrayList, dos);
+        for (String s : arrayList) {
+            dos.writeUTF(s);
+        }
     }
 
-    private <T> void writeWithException(Collection<T> collection, DataOutputStream dos){
-        collection.forEach(item -> {
-            try {
-                dos.writeUTF(item.toString());
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+    private <T> void writeWithException(Collection<T> collection, DataOutputStream dos, CustomConsumer<T> consumer) throws IOException {
+        dos.writeInt(collection.size());
+        for (T t : collection) {
+            consumer.apply(t);
+        }
     }
 
     private void readListSection(DataInputStream dis, Resume r, SectionType sectionType) throws IOException {
@@ -142,5 +131,10 @@ public class DataStreamSerializer implements SerializerStraregy {
 
     private List<Organization> getOrganizationList(Resume r, SectionType sectionType) {
         return ((OrganizationSection) r.getSection(sectionType)).getList();
+    }
+
+    @FunctionalInterface
+    interface CustomConsumer<T> {
+        void apply(T t) throws IOException;
     }
 }
