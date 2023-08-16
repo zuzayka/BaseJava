@@ -52,12 +52,7 @@ public class DataStreamSerializer implements SerializerStraregy {
 
     private void writeListSection(Resume r, DataOutputStream dos, SectionType sectionType) throws IOException {
         ListSection listSection = ((ListSection) r.getSection(sectionType));
-        List<String> arrayList = (ArrayList) listSection.getList();
-        int size = arrayList.size();
-        dos.writeInt(arrayList.size());
-        for (String s : arrayList) {
-            dos.writeUTF(s);
-        }
+        writeWithException(listSection.getList(), dos, dos::writeUTF);
     }
 
     private <T> void writeWithException(Collection<T> collection, DataOutputStream dos, CustomConsumer<T> consumer) throws IOException {
@@ -82,21 +77,17 @@ public class DataStreamSerializer implements SerializerStraregy {
             case ACHIEVEMENT, QUALIFICATIONS -> writeListSection(r, dos, sectionType);
             case EXPERIENCE, EDUCATION -> {
                 List<Organization> orgList = getOrganizationList(r, sectionType);
-                int orgListSize = orgList.size();
-                dos.writeInt(orgListSize);
-                for (Organization org : orgList) {
-                    dos.writeUTF(org.getName());
-                    dos.writeUTF(org.getWebSite());
-                    List<Organization.Period> prdList = org.getPeriods();
-                    int prdListSize = prdList.size();
-                    dos.writeInt(prdListSize);
-                    for (Organization.Period op : prdList) {
-                        dos.writeUTF(op.getStartDate().toString());
-                        dos.writeUTF(op.getEndDate().toString());
-                        dos.writeUTF(op.getTitle());
-                        dos.writeUTF(op.getDescription());
-                    }
-                }
+                writeWithException(orgList, dos, element -> {
+                    dos.writeUTF(element.getName());
+                    dos.writeUTF(element.getWebSite());
+                    List<Organization.Period> prdList = element.getPeriods();
+                    writeWithException(prdList, dos, element2 -> {
+                        dos.writeUTF(element2.getStartDate().toString());
+                        dos.writeUTF(element2.getEndDate().toString());
+                        dos.writeUTF(element2.getTitle());
+                        dos.writeUTF(element2.getDescription());
+                    });
+                });
             }
         }
     }
