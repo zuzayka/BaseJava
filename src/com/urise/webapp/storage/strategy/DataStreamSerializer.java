@@ -93,9 +93,19 @@ public class DataStreamSerializer implements SerializerStraregy {
     }
 
     private void readSection(DataInputStream dis, Resume r, SectionType sectionType) throws IOException {
+        CustomSupplier<String> supplString = dis::readUTF;
+        CustomSupplier<LocalDate> supplDate = () -> LocalDate.parse(dis.readUTF(), formatter);
+        CustomSupplier<List<String>> supplStringList = () -> {
+            int size = dis.readInt();
+            List<String> arrayList = new ArrayList<>();
+            for (int i = 0; i < size; i++) {
+                arrayList.add(dis.readUTF());
+            }
+            return arrayList;
+        };
         switch (sectionType) {
-            case PERSONAL, OBJECTIVE -> r.addSection(sectionType, new TextSection(dis.readUTF()));
-            case ACHIEVEMENT, QUALIFICATIONS -> readListSection(dis, r, sectionType);
+            case PERSONAL, OBJECTIVE -> r.addSection(sectionType, new TextSection(supplString.get()));
+            case ACHIEVEMENT, QUALIFICATIONS -> r.addSection(sectionType, new ListSection(supplStringList.get()));
             case EXPERIENCE, EDUCATION -> {
                 List<Organization> orgList = new ArrayList<>();
                 int orgListSize = dis.readInt();
@@ -105,7 +115,7 @@ public class DataStreamSerializer implements SerializerStraregy {
                     List<Organization.Period> prdList = new ArrayList<>();
                     int prdListSize = dis.readInt();
                     for (int j = 0; j < prdListSize; j++) {
-                        LocalDate startDate = LocalDate.parse(dis.readUTF(), formatter);
+                        LocalDate startDate = supplDate.get();
                         LocalDate endDate = LocalDate.parse(dis.readUTF(), formatter);
                         String title = dis.readUTF();
                         String description = dis.readUTF();
@@ -120,6 +130,7 @@ public class DataStreamSerializer implements SerializerStraregy {
         }
     }
 
+
     private List<Organization> getOrganizationList(Resume r, SectionType sectionType) {
         return ((OrganizationSection) r.getSection(sectionType)).getList();
     }
@@ -127,5 +138,10 @@ public class DataStreamSerializer implements SerializerStraregy {
     @FunctionalInterface
     interface CustomConsumer<T> {
         void apply(T t) throws IOException;
+    }
+
+    @FunctionalInterface
+    interface CustomSupplier <T> {
+        T get() throws IOException;
     }
 }
