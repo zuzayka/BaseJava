@@ -23,6 +23,7 @@ public class DataStreamSerializer implements SerializerStraregy {
                 dos.writeUTF(entry.getValue());
             });
             Map<SectionType, AbstractSection> sections = r.getSectionType();
+//            dos.writeInt(sections.size());    // redundant code
             for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
                 writeSection(dos, r, entry.getKey());
             }
@@ -35,10 +36,12 @@ public class DataStreamSerializer implements SerializerStraregy {
             String uuid = dis.readUTF();
             String fullName = dis.readUTF();
             Resume r = new Resume(uuid, fullName);
+
             int size = dis.readInt();
             for (int i = 0; i < size; i++) {
                 r.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             }
+//            int sectionsSize = dis.readInt();  // redundant code
             for (SectionType sectionType : SectionType.values()) {
                 readSection(dis, r, sectionType);
             }
@@ -62,13 +65,13 @@ public class DataStreamSerializer implements SerializerStraregy {
         }
     }
 
-    private void readListSection(DataInputStream dis, Resume r, SectionType sectionType) throws IOException {
+    private <T> List<T> readListSection(DataInputStream dis, CustomSupplier<T> supplier) throws IOException {
         int size = dis.readInt();
-        List<String> arrayList = new ArrayList<>();
+        List<T> arrayList = new ArrayList<>();
         for (int i = 0; i < size; i++) {
-                arrayList.add(dis.readUTF());
+                arrayList.add(supplier.get());
         }
-        r.addSection(sectionType, new ListSection(arrayList));
+        return arrayList;
     }
 
     private void writeSection(DataOutputStream dos, Resume r, SectionType sectionType) throws IOException {
@@ -93,43 +96,17 @@ public class DataStreamSerializer implements SerializerStraregy {
     }
 
     private void readSection(DataInputStream dis, Resume r, SectionType sectionType) throws IOException {
-        CustomSupplier<String> supplString = dis::readUTF;
-        CustomSupplier<LocalDate> supplDate = () -> LocalDate.parse(dis.readUTF(), formatter);
-        CustomSupplier<List<String>> supplStringList = () -> {
-            int size = dis.readInt();
-            List<String> arrayList = new ArrayList<>();
-            for (int i = 0; i < size; i++) {
-                arrayList.add(dis.readUTF());
-            }
-            return arrayList;
-        };
         switch (sectionType) {
-            case PERSONAL, OBJECTIVE -> r.addSection(sectionType, new TextSection(supplString.get()));
-            case ACHIEVEMENT, QUALIFICATIONS -> r.addSection(sectionType, new ListSection(supplStringList.get()));
+            case PERSONAL, OBJECTIVE -> r.addSection(sectionType, new TextSection(dis.readUTF()));
+            case ACHIEVEMENT, QUALIFICATIONS -> r.addSection(sectionType, new ListSection(readListSection(dis, dis::readUTF)));
             case EXPERIENCE, EDUCATION -> {
-                List<Organization> orgList = new ArrayList<>();
-                int orgListSize = dis.readInt();
-                for (int i = 0; i < orgListSize; i++) {
-                    String name = dis.readUTF();
-                    String webSite = dis.readUTF();
-                    List<Organization.Period> prdList = new ArrayList<>();
-                    int prdListSize = dis.readInt();
-                    for (int j = 0; j < prdListSize; j++) {
-                        LocalDate startDate = supplDate.get();
-                        LocalDate endDate = LocalDate.parse(dis.readUTF(), formatter);
-                        String title = dis.readUTF();
-                        String description = dis.readUTF();
-                        Organization.Period prd = new Organization.Period(startDate, endDate, title, description);
-                        prdList.add(prd);
-                    }
-                    Organization org = new Organization(name, webSite, prdList);
-                    orgList.add(org);
-                }
+                List<Organization> orgList = readListSection(dis, () -> new Organization(dis.readUTF(), dis.readUTF(),
+                        readListSection(dis, () -> new Organization.Period(LocalDate.parse(dis.readUTF(), formatter),
+                                LocalDate.parse(dis.readUTF(), formatter), dis.readUTF(), dis.readUTF()))));
                 r.addSection(sectionType, new OrganizationSection(orgList));
             }
         }
     }
-
 
     private List<Organization> getOrganizationList(Resume r, SectionType sectionType) {
         return ((OrganizationSection) r.getSection(sectionType)).getList();
