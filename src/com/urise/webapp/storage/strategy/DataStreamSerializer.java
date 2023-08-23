@@ -23,7 +23,7 @@ public class DataStreamSerializer implements SerializerStraregy {
                 dos.writeUTF(entry.getValue());
             });
             Map<SectionType, AbstractSection> sections = r.getSectionType();
-//            dos.writeInt(sections.size());    // redundant code
+            dos.writeInt(sections.size());
             for (Map.Entry<SectionType, AbstractSection> entry : sections.entrySet()) {
                 writeSection(dos, r, entry.getKey());
             }
@@ -41,9 +41,9 @@ public class DataStreamSerializer implements SerializerStraregy {
             for (int i = 0; i < size; i++) {
                 r.addContact(ContactType.valueOf(dis.readUTF()), dis.readUTF());
             }
-//            int sectionsSize = dis.readInt();  // redundant code
-            for (SectionType sectionType : SectionType.values()) {
-                readSection(dis, r, sectionType);
+            int sectionsSize = dis.readInt();
+            for (int i = 0; i < sectionsSize; i++) {
+                readSection(dis, r);
             }
             return r;
         }
@@ -75,6 +75,7 @@ public class DataStreamSerializer implements SerializerStraregy {
     }
 
     private void writeSection(DataOutputStream dos, Resume r, SectionType sectionType) throws IOException {
+        dos.writeUTF(sectionType.name());
         switch (sectionType) {
             case PERSONAL, OBJECTIVE -> writeStringSection(r, dos, sectionType);
             case ACHIEVEMENT, QUALIFICATIONS -> writeListSection(r, dos, sectionType);
@@ -95,7 +96,8 @@ public class DataStreamSerializer implements SerializerStraregy {
         }
     }
 
-    private void readSection(DataInputStream dis, Resume r, SectionType sectionType) throws IOException {
+    private void readSection(DataInputStream dis, Resume r) throws IOException {
+        SectionType sectionType = SectionType.valueOf(dis.readUTF());
         switch (sectionType) {
             case PERSONAL, OBJECTIVE -> r.addSection(sectionType, new TextSection(dis.readUTF()));
             case ACHIEVEMENT, QUALIFICATIONS -> r.addSection(sectionType, new ListSection(readListSection(dis, dis::readUTF)));
