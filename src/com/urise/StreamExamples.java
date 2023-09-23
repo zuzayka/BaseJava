@@ -10,7 +10,6 @@ public class StreamExamples {
                 .mapToObj(String::valueOf).collect(Collectors.joining()));
     }
 
-
     public List<Integer> oddOrEven(List<Integer> integers) {
         return integers.stream().filter(e -> {
             if (integers.stream().reduce(0, Integer::sum) % 2 == 0) {
