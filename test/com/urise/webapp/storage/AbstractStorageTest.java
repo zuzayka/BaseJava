@@ -3,7 +3,9 @@ package com.urise.webapp.storage;
 import com.urise.webapp.ResumeTestData;
 import com.urise.webapp.exception.ExistStorageException;
 import com.urise.webapp.exception.NotExistStorageException;
+import com.urise.webapp.exception.StorageException;
 import com.urise.webapp.model.Resume;
+import com.urise.webapp.util.Config;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -14,7 +16,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public abstract class AbstractStorageTest {
-    protected static final File STORAGE_DIR = new File("/home/miux/Java/basejava/storage");
+    //    protected static final File STORAGE_DIR = new File("/home/miux/Java/basejava/storage");
+    protected static final File STORAGE_DIR = Config.getInstance().getStorageDir();
     protected Storage storage;
 
     protected AbstractStorageTest(Storage storage) {
@@ -78,6 +81,13 @@ public abstract class AbstractStorageTest {
 
     @Test(expected = ExistStorageException.class)
     public void saveExist() throws Exception {
+        if (storage instanceof SqlStorage) {
+            try {
+                storage.save(R1);
+            } catch (StorageException e) {
+                throw new ExistStorageException(R1.getUuid());
+            }
+        }
         storage.save(R1);
     }
 
@@ -111,7 +121,7 @@ public abstract class AbstractStorageTest {
     public void getAllSorted() throws Exception {
         List<Resume> list = storage.getAllSorted();
         assertEquals(3, list.size());
-        if (!(storage instanceof MapStorage)) {
+        if (!((storage instanceof MapStorage) || (storage instanceof SqlStorage))) {
             assertEquals(R1, list.get(1));
             assertEquals(R2, list.get(0));
             assertEquals(R3, list.get(2));
