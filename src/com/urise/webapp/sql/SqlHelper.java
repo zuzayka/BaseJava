@@ -4,40 +4,26 @@ import com.urise.webapp.exception.StorageException;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.function.Consumer;
 
 public class SqlHelper {
     public ConnectionFactory factory;
-    public PreparedStatement ps;
-    public String query;
-    public ResultSet rs;
 
-    public SqlHelper(ConnectionFactory factory, String query) {
+    public SqlHelper(ConnectionFactory factory) {
         this.factory = factory;
-        this.query = query;
     }
 
-    public void getExecute(Consumer<Connection> consumer) {
+    public void execute(ConnectionFactory factory, String query, Executor executor) {
         try (Connection conn = factory.getConnection()) {
-            ps = conn.prepareStatement(query);
-            consumer.accept(conn);
-            ps.execute();
+            PreparedStatement ps = conn.prepareStatement(query);
+            executor.execute(ps);
         } catch (SQLException e) {
             throw new StorageException(e);
         }
     }
 
-
-    public void getExecuteQuery(Consumer<Connection> consumer) {
-        try (Connection conn = factory.getConnection()) {
-            ps = conn.prepareStatement(query);
-            rs = ps.executeQuery();
-            consumer.accept(conn);
-        } catch (SQLException e) {
-            throw new StorageException(e);
-        }
+    @FunctionalInterface
+    public interface Executor {
+        void execute(PreparedStatement ps) throws SQLException;
     }
-
 }
