@@ -13,7 +13,7 @@ public class SqlHelper {
         this.factory = factory;
     }
 
-    public void execute(ConnectionFactory factory, String query, Executor executor) {
+    public void execute(String query, Executor executor) {
         try (Connection conn = factory.getConnection()) {
             PreparedStatement ps = conn.prepareStatement(query);
             executor.execute(ps);

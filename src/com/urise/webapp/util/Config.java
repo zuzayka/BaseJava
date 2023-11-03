@@ -27,7 +27,9 @@ public class Config {
 
     private Config() {
         try (InputStream is = new FileInputStream(PROPERTY)){
-            storage = new SqlStorage("jdbc:postgresql://localhost:5432/resumes", "postgres", "");
+//            storage = new SqlStorage("jdbc:postgresql://localhost:5432/resumes", "postgres", ""); без использования класса Property и файла .property
+            props.load(new FileInputStream(PROPERTY));
+            storage = new SqlStorage(props.getProperty("db.url"), props.getProperty("db.user"), props.getProperty("db.password"));
             props.load(is);
             storageDir = new File(props.getProperty("storage.dir"));
         } catch (IOException e) {
@@ -41,6 +43,11 @@ public class Config {
 
     public File getStorageDir() {
         return storageDir;
+    }
+
+    public static void main(String[] args) {
+        Config config = new Config();
+        System.out.println(config.props.getProperty("db.url"));
     }
 }
 
