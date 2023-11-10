@@ -34,7 +34,6 @@ public class SqlStorage implements Storage {
 
     @Override
     public void update(Resume r) {
-        getResume(r.getUuid());
         sqlHelper.execute("UPDATE resume SET full_name = ? WHERE uuid = ?", ps -> {
             ps.setString(2, r.getUuid());
             ps.setString(1, r.getFullName());
@@ -69,7 +68,6 @@ public class SqlStorage implements Storage {
 
     @Override
     public void delete(String uuid) {
-        getResume(uuid);
         sqlHelper.execute("DELETE FROM resume WHERE uuid = ?", ps -> {
             ps.setString(1, uuid);
             if (ps.executeUpdate() == 0) {
@@ -81,7 +79,7 @@ public class SqlStorage implements Storage {
     @Override
     public List<Resume> getAllSorted() {
         List<Resume> list = new ArrayList<>();
-        sqlHelper.execute("SELECT * FROM resume ORDER BY uuid", ps -> {
+        sqlHelper.execute("SELECT * FROM resume ORDER BY full_name", ps -> {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 String uuid = rs.getString("uuid");
