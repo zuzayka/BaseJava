@@ -19,12 +19,11 @@ public class SqlStorage implements Storage {
 
     @Override
     public int getSize() {
-        sqlHelper.execute("SELECT COUNT(*) FROM resume", ps -> {
+        return sqlHelper.executeWithReturn("SELECT COUNT(*) FROM resume", ps -> {
             ResultSet rs = ps.executeQuery();
             rs.next();
-            sqlHelper.size = rs.getInt(1);
+            return rs.getInt(1);
         });
-        return sqlHelper.size;
     }
 
     @Override
@@ -54,16 +53,15 @@ public class SqlStorage implements Storage {
 
     @Override
     public Resume getResume(String uuid) {
-        sqlHelper.execute("SELECT * FROM resume WHERE uuid = ?", ps -> {
+        return sqlHelper.executeWithReturn("SELECT * FROM resume WHERE uuid = ?", ps -> {
             ps.setString(1, uuid);
             ResultSet rs = ps.executeQuery();
             if (!rs.next()) {
                 throw new NotExistStorageException(uuid);
             }
-            sqlHelper.resume = new Resume(uuid, rs.getString("full_name"));
+            return new Resume(uuid, rs.getString("full_name"));
 
         });
-        return sqlHelper.resume;
     }
 
     @Override
@@ -71,7 +69,7 @@ public class SqlStorage implements Storage {
         sqlHelper.execute("DELETE FROM resume WHERE uuid = ?", ps -> {
             ps.setString(1, uuid);
             if (ps.executeUpdate() == 0) {
-                throw new NotExistStorageException(sqlHelper.resume.getUuid());
+                throw new NotExistStorageException(uuid);
             }
         });
     }
