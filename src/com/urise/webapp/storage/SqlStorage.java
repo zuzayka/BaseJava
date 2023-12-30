@@ -87,15 +87,4 @@ public class SqlStorage implements Storage {
             return list;
         });
     }
-
-    public static void main(String[] args) {
-        SqlStorage sqlStorage = new SqlStorage("jdbc:postgresql://localhost:5432/resumes", "postgres", "");
-//        sqlStorage.clear();
-//        sqlStorage.getResume("128");
-        Resume r = new Resume("uuid3", "Full Name 3");
-        sqlStorage.save(r);
-        sqlStorage.update(r);
-        System.out.println(sqlStorage.getSize());
-        System.out.println(sqlStorage.getAllSorted());
-    }
 }
