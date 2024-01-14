@@ -4,6 +4,8 @@ import com.urise.webapp.model.Resume;
 
 import java.io.Serializable;
 
+import static com.urise.webapp.model.ContactType.*;
+
 public class ResumeTestData implements Serializable {
     public static Resume resumeFill(String uuid, String fullName) {
         Resume r = new Resume(uuid, fullName);
@@ -51,10 +53,10 @@ public class ResumeTestData implements Serializable {
 //            }};
 //        r.addSection(QUALIFICATIONS, new ListSection(qualificationList));
 //
-//        r.addContact(PHONE, "+7(921) 855-0482");
-//        r.addContact(SKYPE, "skype:grigory.kislin");
-//        r.addContact(NET_PROFILE, "https://github.com/gkislin");
-//        r.addContact(HOME_PAGE, "http://gkislin.ru/");
+        r.addContact(PHONE, "+7(921) 855-0482");
+        r.addContact(SKYPE, "skype:grigory.kislin");
+        r.addContact(NET_PROFILE, "https://github.com/gkislin");
+        r.addContact(HOME_PAGE, "http://gkislin.ru/");
 //
 //        r.addSection(PERSONAL, new TextSection("Аналитический склад ума, сильная логика, креативность," + " инициативность. Пурист кода и архитектуры"));
 //        r.addSection(OBJECTIVE, new TextSection("Ведущий стажировок и корпоративного обучения по Java Web" + " и Enterprise технологиям"));
