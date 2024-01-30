@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -99,8 +100,6 @@ public class SqlStorage implements Storage {
                         if (value != null) {
                             ContactType type = ContactType.valueOf(rs.getString("type"));
                             r.addContact(type, value);
-                        } else {
-                            return r;
                         }
                     } while (rs.next());
                     return r;
@@ -119,25 +118,36 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        return sqlHelper.executeWithReturn("SELECT * FROM resume ORDER BY full_name", ps -> {
+        String query = "SELECT r.uuid, r.full_name, c.type, c.value " +
+                "FROM resume r " +
+                "LEFT JOIN contact c ON r.uuid = c.resume_uuid " +
+                "ORDER BY r.full_name";
+
+        return sqlHelper.executeWithReturn(query, ps -> {
             List<Resume> list = new ArrayList<>();
             ResultSet rs = ps.executeQuery();
+
+            Map<String, Resume> resumeMap = new HashMap<>();
+
             while (rs.next()) {
                 String uuid = rs.getString("uuid");
                 String fullName = rs.getString("full_name");
-                Resume r =new Resume(uuid, fullName);
-                sqlHelper.execute("SELECT * FROM contact " +
-                        "WHERE resume_uuid = ?", ps2 -> {
-                    ps2.setString(1, uuid);
-                            ResultSet rs2 = ps2.executeQuery();
-                            while (rs2.next()) {
-                                ContactType type = ContactType.valueOf(rs2.getString("type"));
-                                String value = rs2.getString("value");
-                                r.addContact(type, value);
-                            }
-                        });
-                list.add(r);
+
+                Resume resume = resumeMap.get(uuid);
+                if (resume == null) {
+                    resume = new Resume(uuid, fullName);
+                    list.add(resume);
+                    resumeMap.put(uuid, resume);
+                }
+
+                String contactType = rs.getString("type");
+                if (contactType != null) {
+                    ContactType type = ContactType.valueOf(contactType);
+                    String value = rs.getString("value");
+                    resume.addContact(type, value);
+                }
             }
+
             return list;
         });
     }
