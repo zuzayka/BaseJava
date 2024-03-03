@@ -8,10 +8,8 @@ import com.urise.webapp.sql.SqlHelper;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.sql.SQLException;
+import java.util.*;
 
 public class SqlStorage implements Storage {
     private final SqlHelper sqlHelper;
@@ -44,16 +42,43 @@ public class SqlStorage implements Storage {
                             throw new NotExistStorageException(r.getUuid());
                         }
                     }
-                    try (PreparedStatement ps = conn.prepareStatement("UPDATE contact SET value = ? " +
-                            "WHERE type = ? AND resume_uuid = ?")) {
-                        for (Map.Entry<ContactType, String> e : r.getContactType().entrySet()) {
-                            ps.setString(3, r.getUuid());
-                            ps.setString(2, e.getKey().name());
-                            ps.setString(1, e.getValue());
-                            ps.addBatch();
+                    Map<ContactType, String> contactMap = r.getContactType();
+
+//                    try (PreparedStatement ps = conn.prepareStatement("UPDATE contact SET value = ? " +
+//                            "WHERE type = ? AND resume_uuid = ?")) {
+////                        for (Map.Entry<ContactType, String> e : r.getContactType().entrySet()) {
+////                            ps.setString(3, r.getUuid());
+////                            ps.setString(2, e.getKey().name());
+////                            ps.setString(1, e.getValue());
+////                            ps.addBatch();
+////                        }
+//                        for (ContactType type : ContactType.values()) {
+//                            if (contactMap.get(type) != null) {
+//                                ps.setString(3, r.getUuid());
+//                                ps.setString(2, type.toString());
+//                                ps.setString(1, contactMap.get(type));
+//                                ps.addBatch();
+//                            }
+//                        }
+//                        ps.executeBatch();
+//                    }
+                    try (PreparedStatement ps = conn.prepareStatement("DELETE FROM contact" +
+                                                                      " WHERE resume_uuid = ?; " )) {
+                        ps.setString(1, r.getUuid());
+                        ps.executeUpdate();
+                    }
+                    try (PreparedStatement ps = conn.prepareStatement("INSERT INTO contact  (resume_uuid, type," +
+                                                                      " value) VALUES (?,?,?) " )) {
+                        for (ContactType type : ContactType.values()) {
+                                ps.setString(1, r.getUuid());
+                                ps.setString(2, type.toString());
+                                ps.setString(3, contactMap.get(type));
+                                ps.addBatch();
                         }
                         ps.executeBatch();
                     }
+
+
                     return null;
                 }
         );
@@ -96,11 +121,7 @@ public class SqlStorage implements Storage {
                     }
                     Resume r = new Resume(uuid, rs.getString("full_name"));
                     do {
-                        String value = rs.getString("value");
-                        if (value != null) {
-                            ContactType type = ContactType.valueOf(rs.getString("type"));
-                            r.addContact(type, value);
-                        }
+                        addContact(r, rs);
                     } while (rs.next());
                     return r;
         });
@@ -118,37 +139,33 @@ public class SqlStorage implements Storage {
 
     @Override
     public List<Resume> getAllSorted() {
-        String query = "SELECT r.uuid, r.full_name, c.type, c.value " +
-                "FROM resume r " +
-                "LEFT JOIN contact c ON r.uuid = c.resume_uuid " +
-                "ORDER BY r.full_name";
-
-        return sqlHelper.executeWithReturn(query, ps -> {
-            List<Resume> list = new ArrayList<>();
+        return sqlHelper.executeWithReturn("""
+            SELECT * FROM resume r 
+            LEFT JOIN contact c 
+            ON r.uuid = c.resume_uuid
+            ORDER BY r.full_name
+            """, ps -> {
+            final Map<String, Resume> resumeMap = new LinkedHashMap<>();
             ResultSet rs = ps.executeQuery();
-
-            Map<String, Resume> resumeMap = new HashMap<>();
-
             while (rs.next()) {
                 String uuid = rs.getString("uuid");
-                String fullName = rs.getString("full_name");
-
-                Resume resume = resumeMap.get(uuid);
-                if (resume == null) {
-                    resume = new Resume(uuid, fullName);
-                    list.add(resume);
+                Resume resume;
+                if (resumeMap.containsKey(uuid)) {
+                    resume = resumeMap.get(uuid);
+                } else {
+                    resume = new Resume(uuid, rs.getString(("full_name")));
                     resumeMap.put(uuid, resume);
                 }
-
-                String contactType = rs.getString("type");
-                if (contactType != null) {
-                    ContactType type = ContactType.valueOf(contactType);
-                    String value = rs.getString("value");
-                    resume.addContact(type, value);
-                }
+                addContact(resume, rs);
             }
-
-            return list;
+            return new ArrayList<>(resumeMap.values());
         });
+    }
+
+    private  void addContact(Resume resume, ResultSet resultSet) throws SQLException {
+        String contactType = resultSet.getString("type");
+        if (contactType != null) {
+            resume.addContact(ContactType.valueOf(contactType), resultSet.getString("value"));
+        }
     }
 }

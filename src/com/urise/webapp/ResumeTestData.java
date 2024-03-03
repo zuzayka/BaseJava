@@ -53,7 +53,7 @@ public class ResumeTestData implements Serializable {
 //            }};
 //        r.addSection(QUALIFICATIONS, new ListSection(qualificationList));
 //
-        r.addContact(PHONE, "+7(921) 855-0482");
+//        r.addContact(PHONE, "+7(921) 855-0482");
         r.addContact(SKYPE, "skype:grigory.kislin");
         r.addContact(NET_PROFILE, "https://github.com/gkislin");
         r.addContact(HOME_PAGE, "http://gkislin.ru/");
