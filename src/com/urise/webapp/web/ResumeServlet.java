@@ -28,8 +28,6 @@ public class ResumeServlet extends HttpServlet {
                                     </tr>
                                     <tr>
                                         <td>uuid1</td><td>Ivanov Ivan</td>
-                                
-                                
                                     </tr>
                                     <tr>
                                         <td>uuid2</td><td>Petrov Petr</td>

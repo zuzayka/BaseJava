@@ -9,8 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class SqlStorage implements Storage {
     private final SqlHelper sqlHelper;
@@ -108,31 +106,6 @@ public class SqlStorage implements Storage {
         });
     }
 
-//    @Override
-//    public List<Resume> getAllSorted() {
-//        return sqlHelper.executeWithReturn("""
-//            SELECT * FROM resume r
-//            LEFT JOIN contact c
-//            ON r.uuid = c.resume_uuid
-//            ORDER BY r.full_name
-//            """, ps -> {
-//            final Map<String, Resume> resumeMap = new LinkedHashMap<>();
-//            ResultSet rs = ps.executeQuery();
-//            while (rs.next()) {
-//                String uuid = rs.getString("uuid");
-//                Resume resume;
-//                if (resumeMap.containsKey(uuid)) {
-//                    resume = resumeMap.get(uuid);
-//                } else {
-//                    resume = new Resume(uuid, rs.getString(("full_name")));
-//                    resumeMap.put(uuid, resume);
-//                }
-//                addContact(resume, rs);
-//            }
-//            return new ArrayList<>(resumeMap.values());
-//        });
-//    }
-
     public List<Resume> getAllSorted() {
         List<Resume> resumes = new ArrayList<>();
         sqlHelper.execute("""
@@ -163,6 +136,21 @@ public class SqlStorage implements Storage {
             }
         });
 
+        sqlHelper.execute("""
+        SELECT * FROM section
+        """, ps -> {
+            ResultSet rs = ps.executeQuery();
+            while (rs.next()) {
+                String uuid = rs.getString("resume_uuid");
+                Resume resume = resumes.stream()
+                        .filter(r -> r.getUuid().equals(uuid))
+                        .findFirst()
+                        .orElse(null);
+                if (resume != null) {
+                    addSection(resume, rs);
+                }
+            }
+        });
         return resumes;
     }
 
@@ -175,28 +163,15 @@ public class SqlStorage implements Storage {
 
     private void addSection(Resume resume, ResultSet resultSet) throws SQLException {
         String typeString = resultSet.getString("section_type");
-//        System.out.println(resultSet.getString("section_type"));
         if (Objects.equals(typeString, "PERSONAL") || Objects.equals(typeString, "OBJECTIVE") || Objects.equals(typeString, "ACHIEVEMENT") || Objects.equals(typeString, "QUALIFICATIONS")) {
-//            System.out.println(typeString);
             SectionType sectionType = SectionType.valueOf(typeString);
             switch (sectionType) {
                 case PERSONAL, OBJECTIVE -> resume.addSection(sectionType, new TextSection(resultSet.getString("section_value")));
                 case ACHIEVEMENT, QUALIFICATIONS -> {
-                    resume.addSection(sectionType, new ListSection(stringToList(resultSet.getString("section_value"))));
-//                    System.out.println("resultSet.getString(\"section_value\"):" + resultSet.getString("section_value"));
+                    resume.addSection(sectionType, new ListSection(List.of(resultSet.getString("section_value").split("\n"))));
                 }
             }
         }
-    }
-
-    private List<String> stringToList(String value) {
-        List<String> list;
-        list = Stream.of(value.split("\n"))
-                .map(String::trim)
-//                .map(s -> s + "\n")
-                .collect(Collectors.toList());
-//        System.out.println(list);
-        return list;
     }
 
     private void insertContact(Connection conn, Resume r) throws SQLException {
@@ -218,8 +193,8 @@ public class SqlStorage implements Storage {
                 SectionType keyType = e.getKey();
                 ps.setString(2, e.getKey().name());
                 switch (keyType) {
-                    case PERSONAL, OBJECTIVE -> ps.setString(3, e.getValue().toString());
-                    case ACHIEVEMENT, QUALIFICATIONS -> ps.setString(3, ((ListSection) e.getValue()).toListString());
+                    case PERSONAL, OBJECTIVE -> ps.setString(3, "ListSection{ list=" + e.getValue() + "\n");
+                    case ACHIEVEMENT, QUALIFICATIONS -> ps.setString(3, String.join("\n", ((ListSection) e.getValue()).getList()));
                 }
                 ps.addBatch();
             }
