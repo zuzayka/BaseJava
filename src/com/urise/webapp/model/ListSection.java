@@ -30,20 +30,7 @@ public class ListSection extends AbstractSection {
 
     @Override
     public String toString() {
-        return "ListSection{ list=" + list + "\n";
-    }
-
-    public String toListString() {
-        String result = "";
-        int size = list.size();
-        for (int i = 0; i < size; i++) {
-            if (i != size - 1) {
-                result = result.concat(list.get(i) + "\n");
-            } else {
-                result = result.concat(list.get(i));
-            }
-        }
-        return result;
+        return list.toString();
     }
 
     @Override

@@ -6,9 +6,9 @@ import com.urise.webapp.sql.SqlHelper;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 public class SqlStorage implements Storage {
     private final SqlHelper sqlHelper;
@@ -107,7 +107,7 @@ public class SqlStorage implements Storage {
     }
 
     public List<Resume> getAllSorted() {
-        List<Resume> resumes = new ArrayList<>();
+        Map<String, Resume> resumeMap = new LinkedHashMap<>();
         sqlHelper.execute("""
         SELECT * FROM resume
         ORDER BY full_name
@@ -116,7 +116,7 @@ public class SqlStorage implements Storage {
             while (rs.next()) {
                 String uuid = rs.getString("uuid");
                 Resume resume = new Resume(uuid, rs.getString("full_name"));
-                resumes.add(resume);
+                resumeMap.put(resume.getUuid(), resume);
             }
         });
 
@@ -126,10 +126,7 @@ public class SqlStorage implements Storage {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 String uuid = rs.getString("resume_uuid");
-                Resume resume = resumes.stream()
-                        .filter(r -> r.getUuid().equals(uuid))
-                        .findFirst()
-                        .orElse(null);
+                Resume resume = resumeMap.get(uuid);
                 if (resume != null) {
                     addContact(resume, rs);
                 }
@@ -142,16 +139,13 @@ public class SqlStorage implements Storage {
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
                 String uuid = rs.getString("resume_uuid");
-                Resume resume = resumes.stream()
-                        .filter(r -> r.getUuid().equals(uuid))
-                        .findFirst()
-                        .orElse(null);
+                Resume resume = resumeMap.get(uuid);
                 if (resume != null) {
                     addSection(resume, rs);
                 }
             }
         });
-        return resumes;
+        return new ArrayList<>(resumeMap.values());
     }
 
     private void addContact(Resume resume, ResultSet resultSet) throws SQLException {
@@ -163,7 +157,6 @@ public class SqlStorage implements Storage {
 
     private void addSection(Resume resume, ResultSet resultSet) throws SQLException {
         String typeString = resultSet.getString("section_type");
-        if (Objects.equals(typeString, "PERSONAL") || Objects.equals(typeString, "OBJECTIVE") || Objects.equals(typeString, "ACHIEVEMENT") || Objects.equals(typeString, "QUALIFICATIONS")) {
             SectionType sectionType = SectionType.valueOf(typeString);
             switch (sectionType) {
                 case PERSONAL, OBJECTIVE -> resume.addSection(sectionType, new TextSection(resultSet.getString("section_value")));
@@ -171,7 +164,6 @@ public class SqlStorage implements Storage {
                     resume.addSection(sectionType, new ListSection(List.of(resultSet.getString("section_value").split("\n"))));
                 }
             }
-        }
     }
 
     private void insertContact(Connection conn, Resume r) throws SQLException {
