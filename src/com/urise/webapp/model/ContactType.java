@@ -7,8 +7,18 @@ public enum ContactType {
 //    NET_PROFILE,
 //    HOME_PAGE;
 
-    PHONE("Телефон"),
-    SKYPE("Скайп"),
+    PHONE("Телефон") {
+        @Override
+        public String toHtml (String value) {
+            return "<a href='phone: " + value + "'>" + value + " /a>";
+        }
+    },
+    SKYPE("Скайп") {
+        @Override
+        public String toHtml0 (String value) {
+            return "<a href='skype: " + value + "'>" + value + " /a>";
+        }
+    },
     NET_PROFILE("Профили"),
     HOME_PAGE("Домашняя страница");
 
@@ -22,6 +32,20 @@ public enum ContactType {
         return title;
     }
 
+    public String toHtml0(String value) {
+        return title + ":" + value;
+    }
 
+    public String toHtml(String value) {
+        return (value == null) ? "" : toHtml0(value);
+    }
+
+    public String toLink(String href) {
+        return toLink(href, title);
+    }
+
+    public static String toLink(String href, String title) {
+        return "<a href='" + href + "'>" + title + "</a>";
+    }
 }
 

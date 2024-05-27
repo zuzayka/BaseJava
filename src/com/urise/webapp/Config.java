@@ -10,7 +10,8 @@ import java.io.InputStream;
 import java.util.Properties;
 
 public class Config {
-    private static final File PROPS = new File(getHomeDir(), "config/resumes.property");
+//    private static final File PROPS = new File(getHomeDir(), "/config/resumes.properties");
+private static final File PROPS = new File("/home/miux/Java/basejava/config/resumes.properties");
     private static final Config INSTANCE = new Config();
 
     private final File storageDir;
@@ -46,5 +47,10 @@ public class Config {
             throw new IllegalStateException(homeDir + " is not directory");
         }
         return homeDir;
+    }
+
+    @Override
+    public String toString() {
+        return "Config{" + "storageDir=" + storageDir + ", storage=" + storage + '}';
     }
 }

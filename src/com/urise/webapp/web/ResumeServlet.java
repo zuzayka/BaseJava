@@ -1,9 +1,9 @@
 package com.urise.webapp.web;
 
 import com.urise.webapp.Config;
+import com.urise.webapp.model.ContactType;
 import com.urise.webapp.model.Resume;
 import com.urise.webapp.storage.Storage;
-import com.urise.webapp.model.ContactType;
 
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
@@ -11,52 +11,85 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.Writer;
+import java.util.UUID;
 
 public class ResumeServlet extends HttpServlet {
 
     private Storage storage; // = Config.get().getStorage();
+    private String newName;
+    private static Boolean requestToSave = false;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
+        try {
+            Class.forName("org.postgresql.Driver");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         storage = Config.get().getStorage();
     }
 
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
-
+        request.setCharacterEncoding("UTF-8");
+        String uuid = request.getParameter("uuid");
+        String fullName = request.getParameter("fullName");
+        Resume r = storage.getResume(uuid);
+        r.setFullName(fullName);
+        for (ContactType type : ContactType.values()) {
+            String value = request.getParameter(type.name());
+            if (value != null && value.trim().length() != 0) {
+                r.addContact(type, value);
+            } else {
+                r.getContactType().remove(type);
+            }
+        }
+//        for (SectionType type : SectionType.values()) {
+//            String value = request.getParameter(type.name());
+//            if (value != null && value.trim().length() != 0) {
+//                r.addSection(type, null);
+//            } else {
+//                r.getSectionType().remove(type);
+//            }
+//        }
+        storage.update(r);
+        response.sendRedirect("resume");
     }
 
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws javax.servlet.ServletException, IOException {
-        request.setCharacterEncoding("UTF-8");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, IOException {
         response.setCharacterEncoding("UTF-8");
-//        response.setHeader("Content-Type", "text/html; charset=UTF-8");
         response.setContentType("text/html; charset=UTF-8");
-        Writer writer = response.getWriter();
-        writer.write(
-                "<html>\n" +
-                "<head>\n" +
-                "    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\">\n" +
-                "    <link rel=\"stylesheet\" href=\"css/style.css\">\n" +
-                "    <title>Список всех резюме</title>\n" +
-                "</head>\n" +
-                "<body>\n" +
-                "<section>\n" +
-                "<table border=\"1\" cellpadding=\"8\" cellspacing=\"0\">\n" +
-                "    <tr>\n" +
-                "        <th>Имя</th>\n" +
-                "        <th>Email</th>\n" +
-                "    </tr>\n");
-        for (Resume resume : storage.getAllSorted()) {
-            writer.write(
-                    "<tr>\n" +
-                    "     <td><a href=\"resume?uuid=" + resume.getUuid() + "\">" + resume.getFullName() + "</a></td>\n" +
-                    "     <td>" + resume.getContact(ContactType.PHONE) + "</td>\n" +
-                    "</tr>\n");
+
+        String uuid;
+        String action = request.getParameter("action");
+        if (action == null) {
+            request.setAttribute("resumes", storage.getAllSorted());
+            request.getRequestDispatcher("/WEB-INF/jsp/list.jsp").forward(request, response);
+            return;
         }
-        writer.write("</table>\n" +
-                     "</section>\n" +
-                     "</body>\n" +
-                     "</html>\n");
+        Resume r = null;
+        switch (action) {
+            case "delete":
+                uuid = request.getParameter("uuid");
+                storage.delete(uuid);
+                response.sendRedirect("resume");
+                return;
+            case "add":
+                uuid = UUID.randomUUID().toString();
+                newName = request.getParameter("fullName");
+                r = new Resume(uuid, newName);
+                storage.save(r);
+                break;
+            case "view":
+            case "edit":
+                uuid = request.getParameter("uuid");
+                r = storage.getResume(uuid);
+                break;
+        }
+        request.setAttribute("resume",r);
+        request.getRequestDispatcher(
+                "view".equals(action) ? "WEB-INF/jsp/view.jsp" : "edit".equals(action) ?
+                        "WEB-INF/jsp/edit.jsp" : "WEB-INF/jsp/add.jsp"
+        ).forward(request, response);
     }
 }

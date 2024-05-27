@@ -55,14 +55,6 @@ public class Resume implements Comparable<Resume>, Serializable {
         return fullName;
     }
 
-//    public AbstractSection getSectionType(SectionType type) {
-//        return sectionType.get(type);
-//    }
-//
-//    public Map<ContactType, String> getContactType() {
-//        return contactType;
-//    }
-
     public String getContact(ContactType type) {
         return contactType.get(type);
     }
@@ -114,7 +106,14 @@ public class Resume implements Comparable<Resume>, Serializable {
         return cmp != 0 ? cmp : uuid.compareTo(resume.uuid);
     }
 
-//    public static void resumeFill(Resume R) {
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
+    }
+
+    public void setFullName(String fullName) {
+        this.fullName = fullName;
+    }
+    //    public static void resumeFill(Resume R) {
 //        final LocalDate startMFTIS = LocalDate.of(1984, 9, 1);
 //        final LocalDate stopMFTIS = LocalDate.of(1987, 6, 1);
 //        final String titleMFTIS = "";
