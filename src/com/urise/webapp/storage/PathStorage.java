@@ -34,6 +34,11 @@ public class PathStorage extends AbstractStorage<Path> {
         getFilesList().forEach(this::doDelete);
     }
 
+    @Override
+    public boolean isUuidInStorage(String uuid) {
+        return false;
+    }
+
 
     @Override
     protected Resume doGet(Path path) {

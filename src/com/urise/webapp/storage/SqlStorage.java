@@ -1,7 +1,10 @@
 package com.urise.webapp.storage;
 
 import com.urise.webapp.exception.NotExistStorageException;
-import com.urise.webapp.model.*;
+import com.urise.webapp.model.AbstractSection;
+import com.urise.webapp.model.ContactType;
+import com.urise.webapp.model.Resume;
+import com.urise.webapp.model.SectionType;
 import com.urise.webapp.sql.SqlHelper;
 import com.urise.webapp.util.JsonParser;
 
@@ -147,6 +150,16 @@ public class SqlStorage implements Storage {
             }
         });
         return new ArrayList<>(resumeMap.values());
+    }
+
+    @Override
+    public boolean isUuidInStorage(String uuid) {
+        for (Resume r : getAllSorted()) {
+            if (uuid.equals(r.getUuid())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void addContact(Resume r, ResultSet rs) throws SQLException {

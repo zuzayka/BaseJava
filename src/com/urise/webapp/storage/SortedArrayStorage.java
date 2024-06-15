@@ -44,6 +44,11 @@ public class SortedArrayStorage extends AbstractArrayStorage{
         }
     }
 
+    @Override
+    public boolean isUuidInStorage(String uuid) {
+        return false;
+    }
+
 //            Ib. реализация компаратора через вложенный статический кдасс:
 //    private static class ResumeComparator implements Comparator<Resume> {
 //        @Override

@@ -19,6 +19,11 @@ public class ListStorage extends AbstractStorage<Integer> {
     }
 
     @Override
+    public boolean isUuidInStorage(String uuid) {
+        return false;
+    }
+
+    @Override
     protected List<Resume> doCopyAll() {
         return new ArrayList<>(storageList);
     }

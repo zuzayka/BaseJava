@@ -20,12 +20,17 @@ public class MapStorage extends AbstractStorage<String> {
         storageMap.clear();
     }
 
-//    @Override
-//    public List<Resume> getAllSorted() {
-//        List<Resume> sortedList = new ArrayList<>(storageMap.values());
-//        sortedList.sort(RESUME_COMPARATOR);
-//        return sortedList;
-//    }
+    @Override
+    public boolean isUuidInStorage(String uuid) {
+        return false;
+    }
+
+    @Override
+    public List<Resume> getAllSorted() {
+        List<Resume> sortedList = new ArrayList<>(storageMap.values());
+        sortedList.sort(RESUME_COMPARATOR);
+        return sortedList;
+    }
 
     @Override
     protected List<Resume> doCopyAll() {

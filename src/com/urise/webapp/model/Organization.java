@@ -9,8 +9,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.time.Month;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -18,6 +17,8 @@ import static com.urise.webapp.util.DateUtil.NOW;
 
 @XmlAccessorType(XmlAccessType.FIELD)
 public class Organization implements Serializable {
+    private static final long serialVersionUID = 1L;
+    public static final Organization EMPTY = new Organization("", "", List.of(Period.EMPTY));
     protected String name;
     protected String webSite;
     protected List<Period> periods;
@@ -71,6 +72,7 @@ public class Organization implements Serializable {
 
     @XmlAccessorType(XmlAccessType.FIELD)
     public static class Period implements Serializable {
+        public static final Period EMPTY = new Period();
         private static final long serialVersionUID = 1L;
         @XmlJavaTypeAdapter(LocalDateAdapter.class)
         protected LocalDate startDate;
@@ -121,8 +123,6 @@ public class Organization implements Serializable {
 
         @Override
         public String toString() {
-//            return "Period{" + "startDate=" + "startDate.format(fmt)" + ", endDate=" + "endDate.format(fmt)" + "," +
-//                    " title='" + title + '\'' + ", description='" + description + '}';
             return "\nPeriod{" + "startDate=" + startDate + ", \nendDate=" + endDate + "," +
                     " \ntitle='" + title + '\'' + ", \ndescription='" + description + '}';
         }
@@ -148,7 +148,6 @@ public class Organization implements Serializable {
             result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
             result = 31 * result + (title != null ? title.hashCode() : 0);
             result = 31 * result + (description != null ? description.hashCode() : 0);
-//            result = 31 * result + (fmt != null ? fmt.hashCode() : 0);
             return result;
         }
     }

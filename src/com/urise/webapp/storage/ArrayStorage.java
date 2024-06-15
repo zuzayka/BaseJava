@@ -47,4 +47,9 @@ public class ArrayStorage extends AbstractArrayStorage {
         List<Resume> list = aS.getAllSorted();
         System.out.println(aS + "\n" + list);
     }
+
+    @Override
+    public boolean isUuidInStorage(String uuid) {
+        return false;
+    }
 }

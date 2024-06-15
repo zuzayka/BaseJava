@@ -23,4 +23,6 @@ public interface Storage {
 
     //    Resume[] getAll();
     List<Resume> getAllSorted();
+
+    boolean isUuidInStorage(String uuid);
 }

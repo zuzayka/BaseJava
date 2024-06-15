@@ -37,6 +37,11 @@ public class FileStorage extends AbstractStorage<File> {
         }
     }
 
+    @Override
+    public boolean isUuidInStorage(String uuid) {
+        return false;
+    }
+
 
     @Override
     protected File getSearchKey(String uuid) {

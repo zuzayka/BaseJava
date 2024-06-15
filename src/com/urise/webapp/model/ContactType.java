@@ -7,20 +7,28 @@ public enum ContactType {
 //    NET_PROFILE,
 //    HOME_PAGE;
 
-    PHONE("Телефон") {
-        @Override
-        public String toHtml (String value) {
-            return "<a href='phone: " + value + "'>" + value + " /a>";
-        }
-    },
+    PHONE("Телефон"),
     SKYPE("Скайп") {
         @Override
-        public String toHtml0 (String value) {
-            return "<a href='skype: " + value + "'>" + value + " /a>";
+        public String toHtml0(String value) {
+            return "<a href='skype: " + value + "'>" + getTitle() + " </a>";
         }
     },
-    NET_PROFILE("Профили"),
-    HOME_PAGE("Домашняя страница");
+    NET_PROFILE("Профили")
+            {
+        @Override
+        public String toHtml0(String value) {
+            return "<a href='" + value + "'>" + getTitle() + ": " + value + " </a>";
+        }
+    },
+
+
+    HOME_PAGE("Домашняя страница")
+            {
+    public String toHtml0(String value) {
+        return "<a href='" + value + "'>" + getTitle() + " </a>";
+    }
+    };
 
     private String title;
 
@@ -45,7 +53,7 @@ public enum ContactType {
     }
 
     public static String toLink(String href, String title) {
-        return "<a href='" + href + "'>" + title + "</a>";
+        return "<a href='" + href + "'" + title + "/a>";
     }
 }
 
