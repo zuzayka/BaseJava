@@ -47,7 +47,7 @@ public class Config {
 
     public static void main(String[] args) {
         Config config = new Config();
-        System.out.println(config.props.getProperty("db.url"));
+        System.out.println(config.props.getProperty("storage.dir"));
     }
 }
 
